@@ -1,6 +1,6 @@
 #include <iostream>
 #include <ctime>
-#include "../WordAnalysisLevel.h"
+#include "WordAnalysisLevel.h"
 
 int main() {
     std::cout << "Hello, World! I am neural network" << std::endl;

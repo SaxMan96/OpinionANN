@@ -1,6 +1,8 @@
+#define _USE_MATH_DEFINES
+
 #include <iostream>
 #include <math.h>
-#include "../WordsLayer.h"
+#include "WordsLayer.h"
 
 WordsLayer::WordsLayer(int neurons, int previousLayerNeurons) {
     this->neurons = neurons;

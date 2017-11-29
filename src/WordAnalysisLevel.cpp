@@ -1,4 +1,4 @@
-#include "../WordAnalysisLevel.h"
+#include "WordAnalysisLevel.h"
 
 WordAnalysisLevel::WordAnalysisLevel() {
     inputLayer = new WordsInputLayer();

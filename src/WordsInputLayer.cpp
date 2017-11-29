@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../WordsInputLayer.h"
+#include "WordsInputLayer.h"
 
 WordsInputLayer::WordsInputLayer(){
     output = new Eigen::MatrixXf(32 * 11, 1); // 1 column, 32 rows for letters in  polish alphabet,
