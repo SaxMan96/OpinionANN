@@ -1,7 +1,3 @@
-//
-// Created by Delebrith on 24.11.2017.
-//
-
 #ifndef NEURAL_NETWORK_WORDSINPUTLAYER_H
 #define NEURAL_NETWORK_WORDSINPUTLAYER_H
 
@@ -11,11 +7,14 @@
 
 class WordsInputLayer {
 private:
+    static const int LETTERS_CONSIDERED = 11;
+    static const int ALPHABETH_COUNT = 32;
+protected:
     Eigen::MatrixXf *output;
 public:
     WordsInputLayer();
     Eigen::MatrixXf* getOutput();
-    void calculateOutput(std::vector<int> encodedString);
+    void computeOutput(std::vector<int> encodedString);
     ~WordsInputLayer();
 };
 

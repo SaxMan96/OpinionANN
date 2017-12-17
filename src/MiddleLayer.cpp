@@ -2,16 +2,15 @@
 
 #include <iostream>
 #include <math.h>
-#include "WordsLayer.h"
+#include "../include/MiddleLayer.h"
 
-WordsLayer::WordsLayer(int neurons, int previousLayerNeurons) {
+MiddleLayer::MiddleLayer(int neurons, int previousLayerNeurons) {
     this->neurons = neurons;
     this->connections = new Eigen::MatrixXf(neurons, previousLayerNeurons);
     this->connections->setOnes();
 }
 
-void WordsLayer::computeOutput(Eigen::MatrixXf* previousOutput) {
-
+void MiddleLayer::computeOutput(Eigen::MatrixXf* previousOutput) {
     Eigen::Product<Eigen::MatrixXf, Eigen::MatrixXf> product =  (*connections) * (*previousOutput);
     output = new Eigen::MatrixXf(product);
     for (int i = 0; i < output->cols(); i++){
@@ -21,15 +20,15 @@ void WordsLayer::computeOutput(Eigen::MatrixXf* previousOutput) {
     }
 }
 
-Eigen::MatrixXf* WordsLayer::getOutput(){
+Eigen::MatrixXf* MiddleLayer::getOutput(){
     return output;
 }
 
-void WordsLayer::initRandomConnections() {
+void MiddleLayer::initRandomConnections() {
     connections->setRandom();
 }
 
-WordsLayer::~WordsLayer() {
+MiddleLayer::~MiddleLayer() {
     if (connections != nullptr) delete connections;
     if (output != nullptr) delete output;
 }
