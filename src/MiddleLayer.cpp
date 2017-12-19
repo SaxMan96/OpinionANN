@@ -11,6 +11,7 @@ MiddleLayer::MiddleLayer(int neurons, int previousLayerNeurons) {
 }
 
 void MiddleLayer::computeOutput(Eigen::MatrixXf* previousOutput) {
+    if (output != nullptr) delete output;
     Eigen::Product<Eigen::MatrixXf, Eigen::MatrixXf> product =  (*connections) * (*previousOutput);
     output = new Eigen::MatrixXf(product);
     for (int i = 0; i < output->cols(); i++){

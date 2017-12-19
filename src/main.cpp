@@ -2,8 +2,6 @@
 #include <ctime>
 #include <vector>
 #include "../include/WordAnalysisLevel.h"
-#include "../include/SentenceInputLayer.h"
-#include "../include/SentenceAnalysisLevel.h"
 #include "../include/OpinionInputLayer.h"
 #include "../include/OpinionAnalysisLevel.h"
 
@@ -36,37 +34,17 @@ int main() {
     wordsAnalysisResult.push_back(*(wordAnalysisLevel->analyzeWord(input)));
     wordsAnalysisResult.push_back(*(wordAnalysisLevel->analyzeWord(input2)));
 
-    SentenceInputLayer* sentenceInputLayer = new SentenceInputLayer();
-    sentenceInputLayer->computeOutput(wordsAnalysisResult);
-    std::cout << *(sentenceInputLayer->getOutput()) << std::endl << std::endl;
-
-    SentenceAnalysisLevel* sentenceAnalysisLevel = new SentenceAnalysisLevel();
-    sentenceAnalysisLevel->initRandomConnections();
-    std::cout << *(sentenceAnalysisLevel->analyzeSentence(wordsAnalysisResult)) << std::endl << std::endl;
-
     std::vector<Eigen::MatrixXf> wordsAnalysisResult2;
     wordsAnalysisResult2.push_back(*(wordAnalysisLevel->analyzeWord(input2)));
     wordsAnalysisResult2.push_back(*(wordAnalysisLevel->analyzeWord(input)));
 
-    std::cout << *(sentenceAnalysisLevel->analyzeSentence(wordsAnalysisResult2)) << std::endl << std::endl;
-
-    std::vector<Eigen::MatrixXf> sentenceAnalisysResult;
-    sentenceAnalisysResult.push_back(*(sentenceAnalysisLevel->analyzeSentence(wordsAnalysisResult)));
-    sentenceAnalisysResult.push_back(*(sentenceAnalysisLevel->analyzeSentence(wordsAnalysisResult2)));
-
-    std::vector<int> separators;
-    separators.push_back(2);
-    separators.push_back(1);
-
-    OpinionInputLayer* opinionInputLayer = new OpinionInputLayer();
-    opinionInputLayer->computeOutput(sentenceAnalisysResult, separators);
-    std::cout << *(opinionInputLayer->getOutput()) << std::endl << std::endl;
-
     OpinionAnalysisLevel* opinionAnalysisLevel = new OpinionAnalysisLevel();
     opinionAnalysisLevel->initRandomConnections();
-    std::cout << *(opinionAnalysisLevel->analyzeOpinion(sentenceAnalisysResult, separators)) << std::endl << std::endl;
+    opinionAnalysisLevel->addSentenceToInput(wordsAnalysisResult);
+    opinionAnalysisLevel->addSentenceToInput(wordsAnalysisResult2);
+    std::cout << *(opinionAnalysisLevel->analyzeOpinion()) << std::endl << std::endl;
 
-    delete wordAnalysisLevel, sentenceAnalysisLevel, opinionInputLayer, opinionAnalysisLevel;
+    delete wordAnalysisLevel, opinionAnalysisLevel;
 
     return 0;
 }

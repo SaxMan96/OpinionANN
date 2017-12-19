@@ -1,29 +1,29 @@
 #include "../include/SentimentalAnalysis.h"
 
+//TODO implement InputParser methods and test
 
 //suggested implementation, may change
 //SentimentalAnalysis::SentimentalAnalysis() {
 //    this->inputParser = new InputParser();
 //    this->wordAnalysisLevel = new WordAnalysisLevel();
-//    this->sentenceAnalysisLevel = new SentenceAnalysisLevel();
 //    this->opinionAnalysisLevel = new OpinionAnalysisLevel();
 //    //here init connections randomly or from file
 //}
 //
 //void SentimentalAnalysis::computeOutput(std::string text) {
-//    wordAnalysisResults.clear();
-//    sentenceAnalysisResults.clear();
 //
-//    inputParser->extractSentencesAndSeparators(text);
+//    std::vector<Eigen::MatrixXf> wordsAnalysisResults;
+//    inputParser->extractSentences(text);
 //    for (int i = 0; i < inputParser->getSentences().size(); i++) {
+//        wordsAnalysisResults.clear();
 //        std::vector<std::string> words = InputParser::extractWordsFromSentence(inputParser->getSentences()[i]);
 //        for (int j = 0; j < words.size(); j++){
 //            std::vector<int> encodedWord = InputParser::encodeString(words[j]);
-//            wordAnalysisResults.push_back(*(wordAnalysisLevel->analyzeWord(encodedWord)));
+//            wordsAnalysisResults.push_back(*(wordAnalysisLevel->analyzeWord(encodedWord)));
 //        }
-//        sentenceAnalysisResults.push_back(*(sentenceAnalysisLevel->analyzeSentence(wordAnalysisResults)));
+//        opinionAnalysisLevel->addSentenceToInput(wordsAnalysisResults);
 //    }
-//    finalResult = (*opinionAnalysisLevel->analyzeOpinion(sentenceAnalysisResults, inputParser->getSeparators()))(0,0);
+//    finalResult = (*opinionAnalysisLevel->analyzeOpinion())(0,0);
 //}
 //
 //
@@ -32,5 +32,5 @@
 //}
 //
 //SentimentalAnalysis::~SentimentalAnalysis() {
-//    delete opinionAnalysisLevel, sentenceAnalysisLevel, wordAnalysisLevel, inputParser;
+//    delete opinionAnalysisLevel, wordAnalysisLevel, inputParser;
 //}

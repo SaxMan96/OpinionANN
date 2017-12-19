@@ -9,9 +9,10 @@
 
 class OpinionAnalysisLevel {
 private:
-    static const int LAYERS = 3; //input excluded, output included
+    static const int LAYERS = 4; //input excluded, output included
     static const int NEURONS_1ST_LAYER = 600;
-    static const int NEURONS_2ND_LAYER = 60;
+    static const int NEURONS_2ND_LAYER = 300;
+    static const int NEURONS_3RD_LAYER = 60;
     static const int NEURONS_OUTPUT_LAYER = 1;
     std::vector<MiddleLayer *> layers;
     OpinionInputLayer* inputLayer;
@@ -19,8 +20,8 @@ public:
     OpinionAnalysisLevel();
     void initRandomConnections();
     void initKnownConnections();
-    Eigen::MatrixXf* analyzeOpinion(std::vector<Eigen::MatrixXf> sentenceAnalysisResults,
-                                    std::vector<int> encodedSeparators);
+    void addSentenceToInput(std::vector<Eigen::MatrixXf> wordsAnalysisResults);
+    Eigen::MatrixXf* analyzeOpinion();
     ~OpinionAnalysisLevel();
 };
 

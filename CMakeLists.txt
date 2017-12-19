@@ -13,12 +13,10 @@ set(SOURCE_FILES
 	src/main.cpp
 	src/InputParser.cpp
 	src/OpinionAnalysisLevel.cpp
-	src/SentenceAnalysisLevel.cpp
-	src/WordAnalysisLevel.cpp
+        src/WordAnalysisLevel.cpp
 	src/WordsInputLayer.cpp
 	src/MiddleLayer.cpp
-	src/SentenceInputLayer.cpp
-	src/OpinionInputLayer.cpp
+        src/OpinionInputLayer.cpp
 	src/SentimentalAnalysis.cpp)
 
 add_executable(OpinionANN ${SOURCE_FILES})
