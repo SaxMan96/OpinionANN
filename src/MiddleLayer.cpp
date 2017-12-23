@@ -7,6 +7,7 @@
 MiddleLayer::MiddleLayer(int neurons, int previousLayerNeurons) {
     this->neurons = neurons;
     this->connections = new Eigen::MatrixXf(neurons, previousLayerNeurons);
+    this->bias = new Eigen::MatrixXf(neurons, 1);
     this->connections->setOnes();
 }
 
@@ -16,7 +17,7 @@ void MiddleLayer::computeOutput(Eigen::MatrixXf* previousOutput) {
     output = new Eigen::MatrixXf(product);
     for (int i = 0; i < output->cols(); i++){
         for (int j = 0; j < output->rows(); j++){
-            (*output)(j, i) = atan((*output)(j, i))/(M_PI_2);
+            (*output)(j, i) = atan((*output)(j, i) - (*bias)(j, i))/(M_PI_2);
         }
     }
 }
@@ -27,6 +28,7 @@ Eigen::MatrixXf* MiddleLayer::getOutput(){
 
 void MiddleLayer::initRandomConnections() {
     connections->setRandom();
+    bias->setRandom();
 }
 
 MiddleLayer::~MiddleLayer() {

@@ -8,6 +8,7 @@ class MiddleLayer: public WordsInputLayer {
 protected:
     int neurons;
     Eigen::MatrixXf *connections;
+    Eigen::MatrixXf *bias;
 public:
     MiddleLayer(int neurons, int previousLayerNeurons);
     void computeOutput(Eigen::MatrixXf *previousOutput);
