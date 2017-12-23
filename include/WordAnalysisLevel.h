@@ -21,6 +21,8 @@ public:
     void initKnownConnections();
     Eigen::MatrixXf* analyzeWord(std::vector<int> encodedWord);
     ~WordAnalysisLevel();
+
+	double backpropagate(const std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>& trainingExamples);
 };
 
 

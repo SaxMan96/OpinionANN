@@ -8,10 +8,12 @@ class MiddleLayer: public WordsInputLayer {
 protected:
     int neurons;
     Eigen::MatrixXf *connections;
+	Eigen::MatrixXf *weitghtedInput = nullptr;
 public:
     MiddleLayer(int neurons, int previousLayerNeurons);
     void computeOutput(Eigen::MatrixXf *previousOutput);
     Eigen::MatrixXf* getOutput();
+	Eigen::MatrixXf* getWeightedInput();
     void initRandomConnections();
     void initKnownConnections();
     ~MiddleLayer();

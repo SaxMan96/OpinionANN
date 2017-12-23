@@ -11,9 +11,13 @@ MiddleLayer::MiddleLayer(int neurons, int previousLayerNeurons) {
 }
 
 void MiddleLayer::computeOutput(Eigen::MatrixXf* previousOutput) {
-    if (output != nullptr) delete output;
+	if (output != nullptr) delete output;
+	if (weitghtedInput != nullptr) delete weitghtedInput;
     Eigen::Product<Eigen::MatrixXf, Eigen::MatrixXf> product =  (*connections) * (*previousOutput);
-    output = new Eigen::MatrixXf(product);
+
+	weitghtedInput = new Eigen::MatrixXf(product);
+	output = new Eigen::MatrixXf(product);
+
     for (int i = 0; i < output->cols(); i++){
         for (int j = 0; j < output->rows(); j++){
             (*output)(j, i) = atan((*output)(j, i))/(M_PI_2);
@@ -21,8 +25,12 @@ void MiddleLayer::computeOutput(Eigen::MatrixXf* previousOutput) {
     }
 }
 
-Eigen::MatrixXf* MiddleLayer::getOutput(){
-    return output;
+Eigen::MatrixXf* MiddleLayer::getOutput() {
+	return output;
+}
+
+Eigen::MatrixXf* MiddleLayer::getWeightedInput() {
+	return weitghtedInput;
 }
 
 void MiddleLayer::initRandomConnections() {
@@ -31,6 +39,6 @@ void MiddleLayer::initRandomConnections() {
 
 MiddleLayer::~MiddleLayer() {
     if (connections != nullptr) delete connections;
-    if (output != nullptr) delete output;
+    if (weitghtedInput != nullptr) delete weitghtedInput;
 }
 

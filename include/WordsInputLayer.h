@@ -10,7 +10,7 @@ private:
     static const int LETTERS_CONSIDERED = 11;
     static const int ALPHABETH_COUNT = 32;
 protected:
-    Eigen::MatrixXf *output;
+	Eigen::MatrixXf *output;
 public:
     WordsInputLayer();
     Eigen::MatrixXf* getOutput();

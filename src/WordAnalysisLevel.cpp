@@ -28,3 +28,30 @@ Eigen::MatrixXf* WordAnalysisLevel::analyzeWord(std::vector<int> encodedWord) {
     return layers[LAYERS-1]->getOutput();
 }
 
+inline void atanDeriverate(Eigen::MatrixXf& X)
+{
+	for (int i = 0; i < X.rows(); i++)
+		for (int j = 0; j < X.cols(); j++)
+			X(i, j) = 1.0f / (1.0f + X(i, j) * X(i, j));
+}
+
+double WordAnalysisLevel::backpropagate(
+	const std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>& trainingExamples)
+{
+	float totalCost = 0.0f;
+
+	for (auto example : trainingExamples)
+	{
+		auto* output = analyzeWord(example.first);
+		Eigen::MatrixXf gradient = (*output - *example.second);
+		Eigen::MatrixXf input = *layers[LAYERS - 1]->getWeightedInput();
+		
+		atanDeriverate(input);
+
+		Eigen::MatrixXf delta = gradient.cwiseProduct(input);
+
+		totalCost += gradient.cwiseProduct(gradient).sum() / (2 * trainingExamples.size());
+	}
+
+	return totalCost;
+}
