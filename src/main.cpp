@@ -19,14 +19,6 @@ int main() {
     wordAnalysisLevel->initRandomConnections();
     std::cout << *(wordAnalysisLevel->analyzeWord(input)) << std::endl << std::endl;
 
-	Eigen::MatrixXf expected(3, 1);
-	expected(0, 0) = 0.0f;
-	expected(1, 0) = -1.0f;
-	expected(2, 0) = 1.0f;
-
-	std::pair<std::vector<int>, Eigen::MatrixXf*> trainingExample(input, &expected);
-
-	std::cout << "Test cost: " << wordAnalysisLevel->backpropagate({ trainingExample }) << std::endl << std::endl;
 
     std::vector<int> input2;
     input2.push_back(4);
@@ -34,8 +26,21 @@ int main() {
     input2.push_back(11);
     input2.push_back(17);
 
-
     std::cout << *(wordAnalysisLevel->analyzeWord(input2)) << std::endl << std::endl;
+
+	Eigen::MatrixXf expected(3, 1);
+	expected(0, 0) = 0.0f;
+	expected(1, 0) = -1.0f;
+	expected(2, 0) = 1.0f;
+
+	std::pair<std::vector<int>, Eigen::MatrixXf*> trainingExample(input, &expected);
+	std::pair<std::vector<int>, Eigen::MatrixXf*> trainingExample2(input2, &expected);
+	
+	for (int i = 0; i < 200; i++)
+		std::cout << "Test cost " << i << ": " << wordAnalysisLevel->backpropagate({ trainingExample, trainingExample2 }, 0.05f) << std::endl;
+	
+	std::cout << *(wordAnalysisLevel->analyzeWord(input)) << std::endl << std::endl;
+	std::cout << *(wordAnalysisLevel->analyzeWord(input2)) << std::endl << std::endl;
 
     std::cout << std::endl;
 
@@ -55,6 +60,8 @@ int main() {
 
 	delete wordAnalysisLevel,
 	delete opinionAnalysisLevel;
+
+	getchar();
 
     return 0;
 }

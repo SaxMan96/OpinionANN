@@ -40,8 +40,10 @@ inline void atanDeriverate(Eigen::MatrixXf& X)
 			X(i, j) = atanDeriverate(X(i, j));
 }
 
+#include <iostream>
+
 double WordAnalysisLevel::backpropagate(
-	const std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>& trainingExamples)
+	const std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>& trainingExamples, float learningSpeed)
 {
 	float totalCost = 0.0f;
 
@@ -52,9 +54,15 @@ double WordAnalysisLevel::backpropagate(
 	weightsGradients.push_back(new Eigen::MatrixXf(NEURONS_2ND_LAYER, NEURONS_1ST_LAYER));
 	weightsGradients.push_back(new Eigen::MatrixXf(NEURONS_OUTPUT_LAYER, NEURONS_2ND_LAYER));
 
+	for (auto e : weightsGradients)
+		e->setConstant(0);
+
 	biasesGradients.push_back(new Eigen::MatrixXf(NEURONS_1ST_LAYER, 1));
 	biasesGradients.push_back(new Eigen::MatrixXf(NEURONS_2ND_LAYER, 1));
 	biasesGradients.push_back(new Eigen::MatrixXf(NEURONS_OUTPUT_LAYER, 1));
+
+	for (auto e : biasesGradients)
+		e->setConstant(0);
 
 	for (auto example : trainingExamples)
 	{
@@ -70,8 +78,12 @@ double WordAnalysisLevel::backpropagate(
 
 		for (int i = 0; i < LAYERS; i++)
 		{
+			Eigen::MatrixXf* prevLevelOutput = i == LAYERS - 1 ? inputLayer->getOutput() : layers[LAYERS - 2 - i]->getOutput();
 
-			if (i != LAYERS - 1)
+			(*weightsGradients[LAYERS - 1 - i]) += delta * prevLevelOutput->transpose();
+			(*biasesGradients[LAYERS - 1 - i]) += delta;
+			
+			if (i != LAYERS - 1) //count error for previous layer
 			{
 				delta = layers[LAYERS - 1 - i]->getWeights()->transpose() * delta;
 
@@ -83,12 +95,32 @@ double WordAnalysisLevel::backpropagate(
 		}
 	}
 
+	totalCost /= (2 * trainingExamples.size());
+
+	//average gradients and change to params differences
+	for (auto e : weightsGradients)
+		*e *= learningSpeed / -(float)trainingExamples.size();
+	for (auto e : biasesGradients)
+		*e *= learningSpeed / -(float)trainingExamples.size();
+
+	//for (auto e : weightsGradients)
+	//	std::cout << "weight:\n" << *e << std::endl;
+	//for (auto e : biasesGradients)
+	//	std::cout << "biases:\n" << *e << std::endl;
+
+	//adjust weights and biases
+
+	for (int i = 0; i < LAYERS; i++)
+	{
+		layers[i]->adjustConnections(weightsGradients[i]);
+		layers[i]->adjustBiases(biasesGradients[i]);
+	}
+
 	for (auto e : weightsGradients)
 		delete e;
 	for (auto e : biasesGradients)
 		delete e;
 
-	totalCost /= (2 * trainingExamples.size());
 
 	return totalCost;
 }

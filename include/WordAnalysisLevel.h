@@ -22,7 +22,7 @@ public:
     Eigen::MatrixXf* analyzeWord(std::vector<int> encodedWord);
     ~WordAnalysisLevel();
 
-	double backpropagate(const std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>& trainingExamples);
+	double backpropagate(const std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>& trainingExamples, float learningSpeed);
 };
 
 

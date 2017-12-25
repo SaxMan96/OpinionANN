@@ -21,7 +21,7 @@ void MiddleLayer::computeOutput(Eigen::MatrixXf* previousOutput) {
 
     for (int i = 0; i < output->cols(); i++){
         for (int j = 0; j < output->rows(); j++){
-            (*output)(j, i) = atan((*output)(j, i) - (*bias)(j, i))/(M_PI_2);
+            (*output)(j, i) = atan((*output)(j, i) + (*bias)(j, i))/(M_PI_2);
         }
     }
 }
@@ -49,3 +49,13 @@ MiddleLayer::~MiddleLayer() {
     if (weitghtedInput != nullptr) delete weitghtedInput;
 }
 
+
+void MiddleLayer::adjustConnections(Eigen::MatrixXf* diff)
+{
+	*this->connections += *diff;
+}
+
+void MiddleLayer::adjustBiases(Eigen::MatrixXf* diff)
+{
+	*this->bias += *diff;
+}

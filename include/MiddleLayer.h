@@ -19,6 +19,10 @@ public:
 	Eigen::MatrixXf* getWeights();
     void initRandomConnections();
     void initKnownConnections();
+
+	void adjustConnections(Eigen::MatrixXf* diff);
+	void adjustBiases(Eigen::MatrixXf* diff);
+
     ~MiddleLayer();
 };
 
