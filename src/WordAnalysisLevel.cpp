@@ -28,17 +28,33 @@ Eigen::MatrixXf* WordAnalysisLevel::analyzeWord(std::vector<int> encodedWord) {
     return layers[LAYERS-1]->getOutput();
 }
 
+inline float atanDeriverate(float f)
+{
+	return 1.0f / (1.0f + f * f);
+}
+
 inline void atanDeriverate(Eigen::MatrixXf& X)
 {
 	for (int i = 0; i < X.rows(); i++)
 		for (int j = 0; j < X.cols(); j++)
-			X(i, j) = 1.0f / (1.0f + X(i, j) * X(i, j));
+			X(i, j) = atanDeriverate(X(i, j));
 }
 
 double WordAnalysisLevel::backpropagate(
 	const std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>& trainingExamples)
 {
 	float totalCost = 0.0f;
+
+	std::vector<Eigen::MatrixXf*> weightsGradients;
+	std::vector<Eigen::MatrixXf*> biasesGradients;
+
+	weightsGradients.push_back(new Eigen::MatrixXf(NEURONS_1ST_LAYER, inputLayer->getOutput()->rows()));
+	weightsGradients.push_back(new Eigen::MatrixXf(NEURONS_2ND_LAYER, NEURONS_1ST_LAYER));
+	weightsGradients.push_back(new Eigen::MatrixXf(NEURONS_OUTPUT_LAYER, NEURONS_2ND_LAYER));
+
+	biasesGradients.push_back(new Eigen::MatrixXf(NEURONS_1ST_LAYER, 1));
+	biasesGradients.push_back(new Eigen::MatrixXf(NEURONS_2ND_LAYER, 1));
+	biasesGradients.push_back(new Eigen::MatrixXf(NEURONS_OUTPUT_LAYER, 1));
 
 	for (auto example : trainingExamples)
 	{
@@ -50,8 +66,29 @@ double WordAnalysisLevel::backpropagate(
 
 		Eigen::MatrixXf delta = gradient.cwiseProduct(input);
 
-		totalCost += gradient.cwiseProduct(gradient).sum() / (2 * trainingExamples.size());
+		totalCost += gradient.cwiseProduct(gradient).sum();
+
+		for (int i = 0; i < LAYERS; i++)
+		{
+
+			if (i != LAYERS - 1)
+			{
+				delta = layers[LAYERS - 1 - i]->getWeights()->transpose() * delta;
+
+				Eigen::MatrixXf inputGradient(*layers[LAYERS - 2 - i]->getWeightedInput());
+				atanDeriverate(inputGradient);
+
+				delta = delta.cwiseProduct(inputGradient);
+			}
+		}
 	}
+
+	for (auto e : weightsGradients)
+		delete e;
+	for (auto e : biasesGradients)
+		delete e;
+
+	totalCost /= (2 * trainingExamples.size());
 
 	return totalCost;
 }

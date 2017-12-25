@@ -39,6 +39,11 @@ void MiddleLayer::initRandomConnections() {
     bias->setRandom();
 }
 
+Eigen::MatrixXf* MiddleLayer::getWeights()
+{
+	return connections;
+}
+
 MiddleLayer::~MiddleLayer() {
     if (connections != nullptr) delete connections;
     if (weitghtedInput != nullptr) delete weitghtedInput;

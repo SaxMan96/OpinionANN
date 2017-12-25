@@ -15,6 +15,8 @@ public:
     void computeOutput(Eigen::MatrixXf *previousOutput);
     Eigen::MatrixXf* getOutput();
 	Eigen::MatrixXf* getWeightedInput();
+
+	Eigen::MatrixXf* getWeights();
     void initRandomConnections();
     void initKnownConnections();
     ~MiddleLayer();
