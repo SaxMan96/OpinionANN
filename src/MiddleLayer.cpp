@@ -52,8 +52,9 @@ Eigen::MatrixXf* MiddleLayer::getWeights()
 }
 
 MiddleLayer::~MiddleLayer() {
-    if (connections != nullptr) delete connections;
-    if (weitghtedInput != nullptr) delete weitghtedInput;
+    delete connections;
+	delete weitghtedInput;
+	delete bias;
 }
 
 
