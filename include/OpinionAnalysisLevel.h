@@ -18,6 +18,7 @@ private:
     OpinionInputLayer* inputLayer;
 public:
     OpinionAnalysisLevel();
+    OpinionAnalysisLevel(const OpinionAnalysisLevel &opinionAnalysisLevel);
     void initRandomConnections();
     void initKnownConnections();
     void addSentenceToInput(std::vector<Eigen::MatrixXf> wordsAnalysisResults);

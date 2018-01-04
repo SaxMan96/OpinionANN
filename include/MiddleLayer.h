@@ -12,6 +12,7 @@ protected:
 	Eigen::MatrixXf *weitghtedInput = nullptr;
 public:
     MiddleLayer(int neurons, int previousLayerNeurons);
+    MiddleLayer(const MiddleLayer &middleLayer);
     void computeOutput(Eigen::MatrixXf *previousOutput);
     Eigen::MatrixXf* getOutput();
 	Eigen::MatrixXf* getWeightedInput();

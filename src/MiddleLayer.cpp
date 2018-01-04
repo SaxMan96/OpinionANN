@@ -11,6 +11,13 @@ MiddleLayer::MiddleLayer(int neurons, int previousLayerNeurons) {
     this->connections->setOnes();
 }
 
+MiddleLayer::MiddleLayer(const MiddleLayer &middleLayer) {
+    this->neurons = middleLayer.neurons;
+    this->connections = new Eigen::MatrixXf(*(middleLayer.connections));
+    this->bias = new Eigen::MatrixXf(*(middleLayer.bias));
+    this->output = new Eigen::MatrixXf(*(middleLayer.output));
+}
+
 void MiddleLayer::computeOutput(Eigen::MatrixXf* previousOutput) {
 	if (output != nullptr) delete output;
 	if (weitghtedInput != nullptr) delete weitghtedInput;

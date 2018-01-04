@@ -58,9 +58,8 @@ int main() {
     opinionAnalysisLevel->addSentenceToInput(wordsAnalysisResult2);
     std::cout << *(opinionAnalysisLevel->analyzeOpinion()) << std::endl << std::endl;
 
-	delete wordAnalysisLevel,
+	delete wordAnalysisLevel;
 	delete opinionAnalysisLevel;
-
 	getchar();
 
     return 0;
