@@ -37,7 +37,7 @@ int main() {
 	std::pair<std::vector<int>, Eigen::MatrixXf*> trainingExample2(input2, &expected);
 	
 	for (int i = 0; i < 200; i++)
-		std::cout << "Test cost " << i << ": " << wordAnalysisLevel->backpropagate({ trainingExample, trainingExample2 }, 0.05f) << std::endl;
+		std::cout << "Test cost " << i << ": " << wordAnalysisLevel->backpropagate({ trainingExample, trainingExample2 }, 0.05f, 2) << std::endl;
 	
 	std::cout << *(wordAnalysisLevel->analyzeWord(input)) << std::endl << std::endl;
 	std::cout << *(wordAnalysisLevel->analyzeWord(input2)) << std::endl << std::endl;

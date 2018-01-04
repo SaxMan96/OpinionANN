@@ -48,93 +48,148 @@ inline void atanDeriverate(Eigen::MatrixXf& X)
 			X(i, j) = atanDeriverate(X(i, j));
 }
 
-#include <iostream>
-
-double WordAnalysisLevel::backpropagate(
-	const std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>& trainingExamples, float learningSpeed, int maxThreads)
+void WordAnalysisLevel::countGradients(WordAnalysisLevel* network,
+	std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>* trainingExamples,
+	std::vector<Eigen::MatrixXf*>* weightsGradients,
+	std::vector<Eigen::MatrixXf*>* biasesGradients,
+	double* totalCost)
 {
-	float totalCost = 0.0f;
+	WordAnalysisLevel localCopy(*network);
 
-	std::vector<Eigen::MatrixXf*> weightsGradients;
-	std::vector<Eigen::MatrixXf*> biasesGradients;
-
-	std::vector<std::thread> threads;
-
-	int threadsN = maxThreads < trainingExamples.size() ? maxThreads : trainingExamples.size();
-
-	for (int i = 0; i < threadsN - 1; i++);
-
-	weightsGradients.push_back(new Eigen::MatrixXf(NEURONS_1ST_LAYER, inputLayer->getOutput()->rows()));
-	weightsGradients.push_back(new Eigen::MatrixXf(NEURONS_2ND_LAYER, NEURONS_1ST_LAYER));
-	weightsGradients.push_back(new Eigen::MatrixXf(NEURONS_OUTPUT_LAYER, NEURONS_2ND_LAYER));
-
-	for (auto e : weightsGradients)
-		e->setConstant(0);
-
-	biasesGradients.push_back(new Eigen::MatrixXf(NEURONS_1ST_LAYER, 1));
-	biasesGradients.push_back(new Eigen::MatrixXf(NEURONS_2ND_LAYER, 1));
-	biasesGradients.push_back(new Eigen::MatrixXf(NEURONS_OUTPUT_LAYER, 1));
-
-	for (auto e : biasesGradients)
-		e->setConstant(0);
-
-	for (auto example : trainingExamples)
+	for (auto example : *trainingExamples)
 	{
-		auto* output = analyzeWord(example.first);
+		auto* output = localCopy.analyzeWord(example.first);
 		Eigen::MatrixXf gradient = (*output - *example.second);
-		Eigen::MatrixXf input = *layers[LAYERS - 1]->getWeightedInput();
-		
+		Eigen::MatrixXf input = *localCopy.layers[LAYERS - 1]->getWeightedInput();
+
 		atanDeriverate(input);
 
 		Eigen::MatrixXf delta = gradient.cwiseProduct(input);
 
-		totalCost += gradient.cwiseProduct(gradient).sum();
+		*totalCost += gradient.cwiseProduct(gradient).sum();
 
 		for (int i = 0; i < LAYERS; i++)
 		{
-			Eigen::MatrixXf* prevLevelOutput = i == LAYERS - 1 ? inputLayer->getOutput() : layers[LAYERS - 2 - i]->getOutput();
+			Eigen::MatrixXf* prevLevelOutput = i == LAYERS - 1 ? localCopy.inputLayer->getOutput() : localCopy.layers[LAYERS - 2 - i]->getOutput();
 
-			(*weightsGradients[LAYERS - 1 - i]) += delta * prevLevelOutput->transpose();
-			(*biasesGradients[LAYERS - 1 - i]) += delta;
-			
+			*(*weightsGradients)[LAYERS - 1 - i] += delta * prevLevelOutput->transpose();
+			*(*biasesGradients)[LAYERS - 1 - i] += delta;
+
 			if (i != LAYERS - 1) //count error for previous layer
 			{
-				delta = layers[LAYERS - 1 - i]->getWeights()->transpose() * delta;
+				delta = localCopy.layers[LAYERS - 1 - i]->getWeights()->transpose() * delta;
 
-				Eigen::MatrixXf inputGradient(*layers[LAYERS - 2 - i]->getWeightedInput());
+				Eigen::MatrixXf inputGradient(*localCopy.layers[LAYERS - 2 - i]->getWeightedInput());
 				atanDeriverate(inputGradient);
 
 				delta = delta.cwiseProduct(inputGradient);
 			}
 		}
 	}
+}
 
-	totalCost /= (2 * trainingExamples.size());
+double WordAnalysisLevel::backpropagate(
+	const std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>& trainingExamples, float learningSpeed, int maxThreads)
+{
+	double totalCost = 0.0;
 
-	//average gradients and change to params differences
-	for (auto e : weightsGradients)
-		*e *= learningSpeed / -(float)trainingExamples.size();
-	for (auto e : biasesGradients)
-		*e *= learningSpeed / -(float)trainingExamples.size();
+	std::vector<std::vector<Eigen::MatrixXf*>*> weightsGradients;
+	std::vector<std::vector<Eigen::MatrixXf*>*> biasesGradients;
+	std::vector<std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>*> examples;
 
-	//for (auto e : weightsGradients)
-	//	std::cout << "weight:\n" << *e << std::endl;
-	//for (auto e : biasesGradients)
-	//	std::cout << "biases:\n" << *e << std::endl;
+	std::vector<double*> costs;
+	std::vector<std::thread> threads;
+
+	int threadsN = maxThreads < trainingExamples.size() ? maxThreads : trainingExamples.size();
+
+	int examplesPerThread = trainingExamples.size() / threadsN;
+	int threadsWithExtraExamples = trainingExamples.size() % threadsN;
+	int example = 0;
+	for (int i = 0; i < threadsN; i++)
+	{
+		//prepare thread
+		std::vector<Eigen::MatrixXf*>* w = new std::vector<Eigen::MatrixXf*>;
+		std::vector<Eigen::MatrixXf*>* b = new std::vector<Eigen::MatrixXf*>;
+
+		w->push_back(new Eigen::MatrixXf(NEURONS_1ST_LAYER, inputLayer->getOutput()->rows()));
+		w->push_back(new Eigen::MatrixXf(NEURONS_2ND_LAYER, NEURONS_1ST_LAYER));
+		w->push_back(new Eigen::MatrixXf(NEURONS_OUTPUT_LAYER, NEURONS_2ND_LAYER));
+
+		for (auto e : *w)
+			e->setConstant(0);
+
+		b->push_back(new Eigen::MatrixXf(NEURONS_1ST_LAYER, 1));
+		b->push_back(new Eigen::MatrixXf(NEURONS_2ND_LAYER, 1));
+		b->push_back(new Eigen::MatrixXf(NEURONS_OUTPUT_LAYER, 1));
+
+		for (auto e : *b)
+			e->setConstant(0);
+
+		std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>* e = new std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>;
+
+		for (int j = 0; j < examplesPerThread || j == examplesPerThread && j < threadsWithExtraExamples; j++)
+			e->push_back(trainingExamples[example++]);
+
+		double* c = new double(0);
+
+		weightsGradients.push_back(w);
+		biasesGradients.push_back(b);
+		examples.push_back(e);
+		costs.push_back(c);
+
+		threads.push_back(std::thread(WordAnalysisLevel::countGradients, this, e, w, b, c));
+	}
+
+	//wait until all threads stop their calculations
+	for (auto& e : threads)
+		e.join();
+
+	for (double* cost : costs)
+		totalCost += *cost;
+
 
 	//adjust weights and biases
 
-	for (int i = 0; i < LAYERS; i++)
+	for (int i = 0; i < layers.size(); i++)
 	{
-		layers[i]->adjustConnections(weightsGradients[i]);
-		layers[i]->adjustBiases(biasesGradients[i]);
+		Eigen::MatrixXf total(layers[i]->getWeights()->rows(), layers[i]->getWeights()->cols());
+		total.setConstant(0);
+
+		for (auto* e : weightsGradients)
+			total += *(*e)[i];
+
+		total *= -learningSpeed / (float)trainingExamples.size();
+		layers[i]->adjustConnections(&total);
+	}
+
+	for (int i = 0; i < layers.size(); i++)
+	{
+		Eigen::MatrixXf total(layers[i]->getOutput()->rows(), layers[i]->getOutput()->cols());
+		total.setConstant(0);
+
+		for (auto* e : biasesGradients)
+			total += *(*e)[i];
+
+		total *= -learningSpeed / (float)trainingExamples.size();
+		layers[i]->adjustBiases(&total);
 	}
 
 	for (auto e : weightsGradients)
+	{
+		for (auto e_in : *e)
+			delete e_in;
 		delete e;
+	}
 	for (auto e : biasesGradients)
+	{
+		for (auto e_in : *e)
+			delete e_in;
+		delete e;
+	}
+	for (auto e : examples)
+		delete e;
+	for (auto e : costs)
 		delete e;
 
-
-	return totalCost;
+	return totalCost / (2 * trainingExamples.size());
 }

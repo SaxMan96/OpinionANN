@@ -23,6 +23,12 @@ public:
     Eigen::MatrixXf* analyzeWord(std::vector<int> encodedWord);
     ~WordAnalysisLevel();
 
+	static void countGradients(WordAnalysisLevel* network,
+		std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>* trainingExamples,
+		std::vector<Eigen::MatrixXf*>* weightsGradients,
+		std::vector<Eigen::MatrixXf*>* biasesGradients,
+		double* totalCost);
+
 	double backpropagate(const std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>& trainingExamples, float learningSpeed, int maxThreads);
 };
 
