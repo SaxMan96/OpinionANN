@@ -44,6 +44,10 @@ int main() {
     opinionAnalysisLevel->addSentenceToInput(wordsAnalysisResult2);
     std::cout << *(opinionAnalysisLevel->analyzeOpinion()) << std::endl << std::endl;
 
+    OpinionAnalysisLevel* opinionAnalysisLevel1 = new OpinionAnalysisLevel((*opinionAnalysisLevel));
+    std::cout << *(opinionAnalysisLevel1->analyzeOpinion()) << std::endl << std::endl;
+
+
     delete wordAnalysisLevel, opinionAnalysisLevel;
 
     return 0;

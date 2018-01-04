@@ -11,6 +11,7 @@ protected:
     Eigen::MatrixXf *bias;
 public:
     MiddleLayer(int neurons, int previousLayerNeurons);
+    MiddleLayer(const MiddleLayer &middleLayer);
     void computeOutput(Eigen::MatrixXf *previousOutput);
     Eigen::MatrixXf* getOutput();
     void initRandomConnections();

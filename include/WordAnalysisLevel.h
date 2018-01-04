@@ -17,6 +17,7 @@ private:
 public:
     static const int NEURONS_OUTPUT_LAYER = 3;
     WordAnalysisLevel();
+    WordAnalysisLevel(const WordAnalysisLevel &wordAnalysisLevel);
     void initRandomConnections();
     void initKnownConnections();
     Eigen::MatrixXf* analyzeWord(std::vector<int> encodedWord);
