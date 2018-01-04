@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <thread>
 #include "../include/WordAnalysisLevel.h"
 
 WordAnalysisLevel::WordAnalysisLevel() {
@@ -43,12 +44,18 @@ inline void atanDeriverate(Eigen::MatrixXf& X)
 #include <iostream>
 
 double WordAnalysisLevel::backpropagate(
-	const std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>& trainingExamples, float learningSpeed)
+	const std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>& trainingExamples, float learningSpeed, int maxThreads)
 {
 	float totalCost = 0.0f;
 
 	std::vector<Eigen::MatrixXf*> weightsGradients;
 	std::vector<Eigen::MatrixXf*> biasesGradients;
+
+	std::vector<std::thread> threads;
+
+	int threadsN = maxThreads < trainingExamples.size() ? maxThreads : trainingExamples.size();
+
+	for (int i = 0; i < threadsN - 1; i++);
 
 	weightsGradients.push_back(new Eigen::MatrixXf(NEURONS_1ST_LAYER, inputLayer->getOutput()->rows()));
 	weightsGradients.push_back(new Eigen::MatrixXf(NEURONS_2ND_LAYER, NEURONS_1ST_LAYER));
