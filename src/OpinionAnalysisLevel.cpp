@@ -9,6 +9,14 @@ OpinionAnalysisLevel::OpinionAnalysisLevel() {
     layers.push_back(new MiddleLayer(NEURONS_OUTPUT_LAYER, NEURONS_3RD_LAYER));
 }
 
+OpinionAnalysisLevel::OpinionAnalysisLevel(const OpinionAnalysisLevel &opinionAnalysisLevel) {
+    inputLayer = new OpinionInputLayer(*opinionAnalysisLevel.inputLayer);
+    layers.push_back(new MiddleLayer(*opinionAnalysisLevel.layers[0]));
+    layers.push_back(new MiddleLayer(*opinionAnalysisLevel.layers[1]));
+    layers.push_back(new MiddleLayer(*opinionAnalysisLevel.layers[2]));
+    layers.push_back(new MiddleLayer(*opinionAnalysisLevel.layers[3]));
+}
+
 OpinionAnalysisLevel::~OpinionAnalysisLevel() {
     for (auto it = layers.begin(); it < layers.end(); it++){
         delete(*it);

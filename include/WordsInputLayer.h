@@ -13,6 +13,7 @@ protected:
     Eigen::MatrixXf *output;
 public:
     WordsInputLayer();
+    WordsInputLayer(const WordsInputLayer &wordsInputLayer);
     Eigen::MatrixXf* getOutput();
     void computeOutput(std::vector<int> encodedString);
     ~WordsInputLayer();

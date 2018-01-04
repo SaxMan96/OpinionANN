@@ -7,6 +7,10 @@ OpinionInputLayer::OpinionInputLayer() {
     this->output->setZero();
 }
 
+OpinionInputLayer::OpinionInputLayer(const OpinionInputLayer &opinionInputLayer) {
+    this->output = new Eigen::MatrixXf(*opinionInputLayer.output);
+}
+
 Eigen::MatrixXf* OpinionInputLayer::getOutput() {
     return this->output;
 }
