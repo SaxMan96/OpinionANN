@@ -48,7 +48,7 @@ inline void atanDeriverate(Eigen::MatrixXf& X)
 			X(i, j) = atanDeriverate(X(i, j));
 }
 
-void WordAnalysisLevel::countGradients(WordAnalysisLevel* network,
+void WordAnalysisLevel::calculateGradients(WordAnalysisLevel* network,
 	std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>* trainingExamples,
 	std::vector<Eigen::MatrixXf*>* weightsGradients,
 	std::vector<Eigen::MatrixXf*>* biasesGradients,
@@ -108,41 +108,43 @@ double WordAnalysisLevel::backpropagate(
 	for (int i = 0; i < threadsN; i++)
 	{
 		//prepare thread
-		std::vector<Eigen::MatrixXf*>* w = new std::vector<Eigen::MatrixXf*>;
-		std::vector<Eigen::MatrixXf*>* b = new std::vector<Eigen::MatrixXf*>;
+		std::vector<Eigen::MatrixXf*>* threadWeightsGradients = new std::vector<Eigen::MatrixXf*>;
+		std::vector<Eigen::MatrixXf*>* threadBiasesGradients = new std::vector<Eigen::MatrixXf*>;
 
-		w->push_back(new Eigen::MatrixXf(NEURONS_1ST_LAYER, inputLayer->getOutput()->rows()));
-		w->push_back(new Eigen::MatrixXf(NEURONS_2ND_LAYER, NEURONS_1ST_LAYER));
-		w->push_back(new Eigen::MatrixXf(NEURONS_OUTPUT_LAYER, NEURONS_2ND_LAYER));
+		threadWeightsGradients->push_back(new Eigen::MatrixXf(NEURONS_1ST_LAYER, inputLayer->getOutput()->rows()));
+		threadWeightsGradients->push_back(new Eigen::MatrixXf(NEURONS_2ND_LAYER, NEURONS_1ST_LAYER));
+		threadWeightsGradients->push_back(new Eigen::MatrixXf(NEURONS_OUTPUT_LAYER, NEURONS_2ND_LAYER));
 
-		for (auto e : *w)
+		for (auto e : *threadWeightsGradients)
 			e->setConstant(0);
 
-		b->push_back(new Eigen::MatrixXf(NEURONS_1ST_LAYER, 1));
-		b->push_back(new Eigen::MatrixXf(NEURONS_2ND_LAYER, 1));
-		b->push_back(new Eigen::MatrixXf(NEURONS_OUTPUT_LAYER, 1));
+		threadBiasesGradients->push_back(new Eigen::MatrixXf(NEURONS_1ST_LAYER, 1));
+		threadBiasesGradients->push_back(new Eigen::MatrixXf(NEURONS_2ND_LAYER, 1));
+		threadBiasesGradients->push_back(new Eigen::MatrixXf(NEURONS_OUTPUT_LAYER, 1));
 
-		for (auto e : *b)
+		for (auto e : *threadBiasesGradients)
 			e->setConstant(0);
 
-		std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>* e = new std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>;
+		std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>* threadExamples
+			= new std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>;
 
 		for (int j = 0; j < examplesPerThread || j == examplesPerThread && j < threadsWithExtraExamples; j++)
-			e->push_back(trainingExamples[example++]);
+			threadExamples->push_back(trainingExamples[example++]);
 
-		double* c = new double(0);
+		double* threadCost = new double(0);
 
-		weightsGradients.push_back(w);
-		biasesGradients.push_back(b);
-		examples.push_back(e);
-		costs.push_back(c);
+		weightsGradients.push_back(threadWeightsGradients);
+		biasesGradients.push_back(threadBiasesGradients);
+		examples.push_back(threadExamples);
+		costs.push_back(threadCost);
 
-		threads.push_back(std::thread(WordAnalysisLevel::countGradients, this, e, w, b, c));
+		threads.push_back(std::thread(WordAnalysisLevel::calculateGradients,
+			this, threadExamples, threadWeightsGradients, threadBiasesGradients, threadCost));
 	}
 
 	//wait until all threads stop their calculations
-	for (auto& e : threads)
-		e.join();
+	for (auto& thread : threads)
+		thread.join();
 
 	for (double* cost : costs)
 		totalCost += *cost;
