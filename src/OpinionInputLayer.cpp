@@ -26,6 +26,11 @@ void OpinionInputLayer::addSentence(std::vector<Eigen::MatrixXf> wordsAnalysisLe
     this->sentenceCounter++;
 }
 
+void OpinionInputLayer::reset() {
+    this->sentenceCounter = 0;
+    this->output->setZero();
+}
+
 OpinionInputLayer::~OpinionInputLayer() {
     delete output;
 }
