@@ -14,6 +14,7 @@ private:
 public:
     Eigen::MatrixXf* getOutput();
     void addSentence(std::vector<Eigen::MatrixXf> wordsAnalysisResults);
+    void reset();
     OpinionInputLayer();
     OpinionInputLayer(const OpinionInputLayer &opinionInputLayer);
     ~OpinionInputLayer();

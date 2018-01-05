@@ -47,8 +47,10 @@ int main() {
     OpinionAnalysisLevel* opinionAnalysisLevel1 = new OpinionAnalysisLevel((*opinionAnalysisLevel));
     std::cout << *(opinionAnalysisLevel1->analyzeOpinion()) << std::endl << std::endl;
 
+    opinionAnalysisLevel1->resetInput();
+    std::cout << *(opinionAnalysisLevel1->analyzeOpinion())  << std::endl << std::endl;
 
-    delete wordAnalysisLevel, opinionAnalysisLevel;
+    delete wordAnalysisLevel, opinionAnalysisLevel, opinionAnalysisLevel1;
 
     return 0;
 }
