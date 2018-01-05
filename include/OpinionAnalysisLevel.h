@@ -28,6 +28,7 @@ public:
     void initRandomConnections();
     void initKnownConnections();
     void addSentenceToInput(std::vector<Eigen::MatrixXf> wordsAnalysisResults);
+    void resetInput();
     Eigen::MatrixXf* analyzeOpinion();
     ~OpinionAnalysisLevel();
 

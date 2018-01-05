@@ -32,6 +32,9 @@ void OpinionAnalysisLevel::addSentenceToInput(std::vector<Eigen::MatrixXf> words
     this->inputLayer->addSentence(wordsAnalysisResults);
 }
 
+void OpinionAnalysisLevel::resetInput() {
+    this->inputLayer->reset();
+}
 
 Eigen::MatrixXf* OpinionAnalysisLevel::analyzeOpinion() {
     layers[0]->computeOutput(inputLayer->getOutput());

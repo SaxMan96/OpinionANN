@@ -62,5 +62,11 @@ int main() {
 	delete opinionAnalysisLevel;
 	getchar();
 
+    opinionAnalysisLevel1->resetInput();
+    std::cout << *(opinionAnalysisLevel1->analyzeOpinion())  << std::endl << std::endl;
+
+    delete wordAnalysisLevel;
+    delete opinionAnalysisLevel;
+    delete opinionAnalysisLevel1;
     return 0;
 }
