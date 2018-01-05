@@ -37,7 +37,7 @@ int main() {
 	std::pair<std::vector<int>, Eigen::MatrixXf*> trainingExample2(input2, &expected);
 	
 	for (int i = 0; i < 200; i++)
-		std::cout << "Test cost " << i << ": " << wordAnalysisLevel->backpropagate({ trainingExample, trainingExample2 }, 0.05f, 2) << std::endl;
+		std::cout << "WORD Test cost " << i << ": " << wordAnalysisLevel->backpropagate({ trainingExample, trainingExample2 }, 0.05f, 2) << std::endl;
 	
 	std::cout << *(wordAnalysisLevel->analyzeWord(input)) << std::endl << std::endl;
 	std::cout << *(wordAnalysisLevel->analyzeWord(input2)) << std::endl << std::endl;
@@ -58,15 +58,26 @@ int main() {
     opinionAnalysisLevel->addSentenceToInput(wordsAnalysisResult2);
     std::cout << *(opinionAnalysisLevel->analyzeOpinion()) << std::endl << std::endl;
 
+	std::vector<std::vector<Eigen::MatrixXf>> trainingSentences;
+	trainingSentences.push_back(wordsAnalysisResult);
+	trainingSentences.push_back(wordsAnalysisResult2);
+
+	Eigen::MatrixXf expectedSentenceResult(1, 1);
+	expectedSentenceResult(0, 0) = 1;
+
+	std::pair<std::vector<std::vector<Eigen::MatrixXf>>, Eigen::MatrixXf*> trainingOpinion(trainingSentences, &expectedSentenceResult);
+
+	for (int i = 0; i < 200; i++)
+		std::cout << "OPINION Test cost " << i << ": " << opinionAnalysisLevel->backpropagate({ trainingOpinion }, 0.05f, 1) << std::endl;
+
+	opinionAnalysisLevel->resetInput();
+	opinionAnalysisLevel->addSentenceToInput(wordsAnalysisResult);
+	opinionAnalysisLevel->addSentenceToInput(wordsAnalysisResult2);
+	std::cout << *(opinionAnalysisLevel->analyzeOpinion()) << std::endl << std::endl;
+
 	delete wordAnalysisLevel;
 	delete opinionAnalysisLevel;
 	getchar();
 
-    opinionAnalysisLevel1->resetInput();
-    std::cout << *(opinionAnalysisLevel1->analyzeOpinion())  << std::endl << std::endl;
-
-    delete wordAnalysisLevel;
-    delete opinionAnalysisLevel;
-    delete opinionAnalysisLevel1;
     return 0;
 }

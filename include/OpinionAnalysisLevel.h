@@ -18,7 +18,7 @@ private:
     OpinionInputLayer* inputLayer;
 
 	static void calculateGradients(OpinionAnalysisLevel* network,
-		std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>* trainingExamples,
+		std::vector<std::pair<std::vector<std::vector<Eigen::MatrixXf>>, Eigen::MatrixXf*>>* trainingExamples,
 		std::vector<Eigen::MatrixXf*>* weightsGradients,
 		std::vector<Eigen::MatrixXf*>* biasesGradients,
 		double* totalCost);
@@ -33,7 +33,7 @@ public:
     ~OpinionAnalysisLevel();
 
 	double backpropagate(
-		const std::vector<std::pair<std::vector<Eigen::MatrixXf>, Eigen::MatrixXf*>>& trainingExamples,
+		const std::vector<std::pair<std::vector<std::vector<Eigen::MatrixXf>>, Eigen::MatrixXf*>>& trainingExamples,
 		float learningSpeed, int maxThreads);
 };
 

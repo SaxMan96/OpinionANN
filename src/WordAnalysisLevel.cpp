@@ -41,7 +41,7 @@ inline float atanDeriverate(float f)
 	return 1.0f / (1.0f + f * f);
 }
 
-inline void atanDeriverate(Eigen::MatrixXf& X)
+inline static void atanDeriverate(Eigen::MatrixXf& X)
 {
 	for (int i = 0; i < X.rows(); i++)
 		for (int j = 0; j < X.cols(); j++)
