@@ -16,6 +16,12 @@ private:
     static const int NEURONS_OUTPUT_LAYER = 1;
     std::vector<MiddleLayer *> layers;
     OpinionInputLayer* inputLayer;
+
+	static void calculateGradients(OpinionAnalysisLevel* network,
+		std::vector<std::pair<std::vector<std::vector<Eigen::MatrixXf>>, Eigen::MatrixXf*>>* trainingExamples,
+		std::vector<Eigen::MatrixXf*>* weightsGradients,
+		std::vector<Eigen::MatrixXf*>* biasesGradients,
+		double* totalCost);
 public:
     OpinionAnalysisLevel();
     OpinionAnalysisLevel(const OpinionAnalysisLevel &opinionAnalysisLevel);
@@ -25,6 +31,10 @@ public:
     void resetInput();
     Eigen::MatrixXf* analyzeOpinion();
     ~OpinionAnalysisLevel();
+
+	double backpropagate(
+		const std::vector<std::pair<std::vector<std::vector<Eigen::MatrixXf>>, Eigen::MatrixXf*>>& trainingExamples,
+		float learningSpeed, int maxThreads);
 };
 
 
