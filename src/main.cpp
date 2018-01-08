@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <ctime>
 #include <vector>
 #include <fstream>
@@ -42,7 +43,7 @@ void writeNetworkFile(string fileName, vector<pair<Eigen::MatrixXf, Eigen::Matri
 	if (myFile.is_open())
 	{
 		for (auto& layer : network)
-			myFile << layer.first << endl << layer.second << endl;
+			myFile << setprecision(numeric_limits<float>::max_digits10) << layer.first << endl << layer.second << endl;
 		
 		myFile.close();
 	}
@@ -80,7 +81,7 @@ vector<pair<vector<int>, Eigen::MatrixXf*>> readWordTrainingFile(string fileName
 			line.erase(0, pos + 1);
 			(*expected)(2, 0) = std::stof(token);
 
-			vec.push_back({ parser.encodeString(line), expected });
+			vec.push_back({ parser.encodeString(word), expected });
 		}
 		myFile.close();
 	}
@@ -88,7 +89,171 @@ vector<pair<vector<int>, Eigen::MatrixXf*>> readWordTrainingFile(string fileName
 	return vec;
 }
 
-int main(int argc, char** argv) {
+struct sentenceRateStruct {
+	std::string sentence;
+	float rate1;
+};
+vector<sentenceRateStruct> readSentenceTrainingFile(string fileName) {
+	std::vector<sentenceRateStruct> vec;
+	string line;
+	string token;
+	ifstream myFile(fileName);
+	if (myFile.is_open())
+	{
+		string sent;
+
+		float rate;
+		int pos = 0;
+		while (getline(myFile, line))
+		{
+			rate = std::stof(line.substr(0, pos = line.find(' ')));
+			line.erase(0, pos + 1);
+			sent = line.substr(0, pos = line.find('\n'));
+			line.erase(0, pos + 1);
+			sentenceRateStruct temp = { sent,rate };
+			vec.push_back(temp);
+		}
+		myFile.close();
+	}
+	else cout << "Unable to open file";
+	return vec;
+}
+
+string rateToWords(float rate) {
+	if (rate<-1.0 || rate>1.0)
+		return "wystąpił błąd\n";
+
+	else if (rate >= -1.0 && rate<-0.7)
+		return "bardzo negatywne\n";
+
+	else if (rate >= -0.7 && rate<-0.4)
+		return "negatywne\n";
+
+	else if (rate >= -0.4 && rate<-0.1)
+		return "lekkonegatywne\n";
+
+	else if (rate >= -0.1 && rate<0.1)
+		return "neutralne\n";
+
+	else if (rate >= 0.1 && rate<0.4)
+		return "lekko pozytywne\n";
+
+	else if (rate >= 0.4 && rate<0.7)
+		return "pozytywne\n";
+
+	else if (rate >= 0.7 && rate<1.0)
+		return "bardzo pozytywne\n";
+
+}
+void clrscr()
+{
+	cin.sync();
+	for (int i = 0; i<25; ++i)
+		cout << "\n";
+}
+
+void get()
+{
+	cin.ignore(1024, '\n');
+	cout << "";
+	cin.get();
+}
+bool isFloat(string myString) {
+	std::istringstream iss(myString);
+	float f;
+	iss >> noskipws >> f;
+	return iss.eof() && !iss.fail();
+}
+
+int wyborMenu()
+{
+	while (1)
+	{
+		string ciag;
+		int wybor;
+		cin >> ciag;
+		int i;
+		int n = ciag.length();
+		for (i = 0; i<n; ++i)
+			if (!isdigit(ciag[i])) break;
+		if (i == n)
+		{
+			istringstream iss(ciag);
+			iss >> wybor;
+			return wybor;
+		}
+		else cout << "Niepoprawny wybor. Wybierz cyfre z przedzialu <1,3>\n" << endl;
+	}
+}
+
+void interactiveMode(OpinionAnalysisLevel* opinionAnalyzis, WordAnalysisLevel* wordAnalyzis)
+{
+	InputParser parser;
+
+	std::vector<sentenceRateStruct> vec;
+	string sent;
+	float rate;
+	string fileName;
+	string word;
+
+	int decyzja;
+	while (1)
+	{
+		decyzja = -1;
+		cout << "MENU:\n<1>Analiza słowa\n<2>Analiza opini\n<3>Wyjscie\n";
+		decyzja = wyborMenu();
+		switch (decyzja)
+		{
+		case 1:
+			//-----------------------Wczytaj z pliku------------------------
+			clrscr();
+			cout << "Podaj słowo i naciśnij ENTER" << endl;
+			cin >> word;
+			cout << (*wordAnalyzis->analyzeWord(parser.encodeString(word)));
+			get();
+			clrscr();
+			break;
+		case 2:
+			//----------------------Wczytaj z klawiatury-----------------------
+			clrscr();
+			cout << "Wpisz opinię i kliknij Enter." << endl;
+			getline(cin, sent);//to ignore new line after option selection
+			getline(cin, sent);
+
+			for (auto sentence : parser.extractSentences(sent))
+			{
+				std::vector<Eigen::MatrixXf> analyzedWords;
+				for (auto word : parser.extractWordsFromSentence(sentence))
+				{
+					analyzedWords.push_back(*wordAnalyzis->analyzeWord(parser.encodeString(word)));
+				}
+
+				opinionAnalyzis->addSentenceToInput(analyzedWords);
+			}
+
+			rate = (*opinionAnalyzis->analyzeOpinion())(0, 0);
+
+			opinionAnalyzis->resetInput();
+
+			cout << "Nacechowanie zdania: " + rateToWords(rate) << endl;
+			break;
+		case 3:
+			//----------------------------Wyjscie---------------------------
+			clrscr();
+			cout << "DZIEKUJE ZA SKORZYSTANIE Z PROGRAMU.";
+			return;
+		default:
+			//-----------------------------Blad-----------------------------
+			cout << "\nBLAD WYBORU.\nNacisnij Enter...";
+			get();
+			clrscr();
+			break;
+		}
+	}
+}
+
+int main(int argc, char** argv) 
+{
 	std::cout << "Hello, World! I am neural network" << std::endl;
 
 	srand(time(NULL));
@@ -171,6 +336,27 @@ int main(int argc, char** argv) {
 	{
 		//interactive mode
 		//sentence network params file, word network params file
+		WordAnalysisLevel* wordNetwork = new WordAnalysisLevel;
+		OpinionAnalysisLevel* opinionNetwork = new OpinionAnalysisLevel;
+
+		auto opinionNetworkData = readNetworkFile(argv[0],
+		{ 360, opinionNetwork->NEURONS_1ST_LAYER, opinionNetwork->NEURONS_2ND_LAYER, opinionNetwork->NEURONS_3RD_LAYER, opinionNetwork->NEURONS_OUTPUT_LAYER });
+		auto wordNetworkData = readNetworkFile(argv[1],
+		{ 11 * 32, wordNetwork->NEURONS_1ST_LAYER, wordNetwork->NEURONS_2ND_LAYER, wordNetwork->NEURONS_OUTPUT_LAYER });
+
+		if (wordNetworkData.empty())
+			wordNetwork->initRandomConnections();
+		else
+			wordNetwork->initKnownConnections(wordNetworkData);
+		if (opinionNetworkData.empty())
+			wordNetwork->initRandomConnections();
+		else
+			opinionNetwork->initKnownConnections(opinionNetworkData);
+
+		interactiveMode(opinionNetwork, wordNetwork);
+
+		delete wordNetwork;
+		delete opinionNetwork;
 	}
 	else if (argc == 5)
 	{
@@ -197,9 +383,9 @@ int main(int argc, char** argv) {
 		{
 			cout << "Run " << i + 1 << " out of " << runs << "... ";
 			cost = network->backpropagate(trainingData, learningSpeed, threads);
-			cout << cost << endl;
+			cout << setprecision(numeric_limits<float>::max_digits10) << cost << endl;
 
-			if (cost < bestCost)
+			if (cost <= bestCost)
 			{
 				cost = bestCost;
 
@@ -215,32 +401,75 @@ int main(int argc, char** argv) {
 	}
 	else if (argc == 6)
 	{
-		cout << "Teaching sentence layer" << endl;
+		cout << "Teaching opinion layer" << endl;
 		//teach sentence layer
 		//opinion network params file, word network params file, input file, learning speed, threads, runs
 		WordAnalysisLevel* wordNetwork = new WordAnalysisLevel;
 		OpinionAnalysisLevel* opinionNetwork = new OpinionAnalysisLevel;
 
 		auto opinionNetworkData = readNetworkFile(argv[0], 
-		{ wordNetwork->NEURONS_OUTPUT_LAYER, opinionNetwork->NEURONS_1ST_LAYER, opinionNetwork->NEURONS_2ND_LAYER, opinionNetwork->NEURONS_3RD_LAYER, opinionNetwork->NEURONS_OUTPUT_LAYER });
+		{ 360, opinionNetwork->NEURONS_1ST_LAYER, opinionNetwork->NEURONS_2ND_LAYER, opinionNetwork->NEURONS_3RD_LAYER, opinionNetwork->NEURONS_OUTPUT_LAYER });
 		auto wordNetworkData = readNetworkFile(argv[1], 
 		{ 11 * 32, wordNetwork->NEURONS_1ST_LAYER, wordNetwork->NEURONS_2ND_LAYER, wordNetwork->NEURONS_OUTPUT_LAYER });
+		auto trainingExamples_unprocessed = readSentenceTrainingFile(argv[2]);
 		float learningSpeed = atof(argv[3]);
 		int threads = atoi(argv[4]);
 		int runs = atoi(argv[5]);
 
-		float cost = 0, prevCost = numeric_limits<float>::max();
+		if (wordNetworkData.size() > 0)
+			wordNetwork->initKnownConnections(wordNetworkData);
+		if (opinionNetworkData.size() > 0)
+			opinionNetwork->initKnownConnections(opinionNetworkData);
+		else
+			opinionNetwork->initRandomConnections();
+
+		vector < pair<vector<vector<Eigen::MatrixXf>>, Eigen::MatrixXf*>> trainingExamples;
+		InputParser parser;
+
+		for (auto example : trainingExamples_unprocessed)
+		{
+			pair<vector<vector<Eigen::MatrixXf>>, Eigen::MatrixXf*> prepared;
+
+			auto sentences = parser.extractSentences(example.sentence);
+			for (auto sentence : sentences)
+			{
+				vector<Eigen::MatrixXf> analyzedSentence;
+				for (auto word : parser.extractWordsFromSentence(sentence))
+				{
+					analyzedSentence.push_back(*wordNetwork->analyzeWord(parser.encodeString(word)));
+				}
+
+				prepared.first.push_back(analyzedSentence);
+			}
+
+			prepared.second = new Eigen::MatrixXf(1, 1);
+			(*prepared.second)(0, 0) = example.rate1;
+
+			trainingExamples.push_back(prepared);
+		}
+
+		float cost = 0, bestCost = numeric_limits<float>::max();
 
 		for (int i = 0; i < runs; i++)
 		{
 			cout << "Run " << i + 1 << " out of " << runs << "... ";
 
-			cout << cost << endl;
-			if (cost < prevCost)
+			cost = opinionNetwork->backpropagate(trainingExamples, learningSpeed, threads);
+
+			cout << setprecision(numeric_limits<float>::max_digits10) << cost << endl;
+			if (cost < bestCost)
 			{
-				//save
+				cost = bestCost;
+
+				if (i == 0)
+					continue;
+
+				opinionNetworkData = opinionNetwork->getKnownConnections();
 			}
 		}
+
+		cout << "Saving" << endl;
+		writeNetworkFile(argv[0], opinionNetworkData);
 	}
 
 

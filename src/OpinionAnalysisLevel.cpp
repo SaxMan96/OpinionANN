@@ -70,7 +70,7 @@ void OpinionAnalysisLevel::calculateGradients(OpinionAnalysisLevel* network,
 	{
 		localCopy.resetInput();
 		for (auto sentence : example.first)
-			localCopy.addSentenceToInput(sentence);//DAFUQ?
+			localCopy.addSentenceToInput(sentence);
 		auto* output = localCopy.analyzeOpinion();
 
 		Eigen::MatrixXf gradient = (*output - *example.second);

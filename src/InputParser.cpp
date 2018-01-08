@@ -5,7 +5,8 @@
 #include <string>
 #include "..\include\InputParser.h"
 
-void InputParser::extractSentences(std::string text) {
+std::vector<std::string> InputParser::extractSentences(std::string text) {
+	this->sentences.clear();
 	text = toLower(text);
 	size_t pos = 0;
 	size_t pos1 = 0;
@@ -26,6 +27,8 @@ void InputParser::extractSentences(std::string text) {
 		push(token);
 		text.erase(0, pos + 1);
 	}
+
+	return this->sentences;
 }
 
 void InputParser::push(std::string s) {
@@ -88,7 +91,7 @@ std::vector<int> InputParser::encodeString(std::string word) {
 	{
 		for (int j = 0; j<letters.size(); j++)
 			if (word.substr(i, letters[j].size()) == letters[j]) {
-				code = j + 1;
+				code = j;
 				i += letters[j].size() - 1;
 				break;
 			}

@@ -12,7 +12,7 @@ class InputParser {
 private:
 	std::vector<std::string> sentences; // every part of text separated from others by '.', '!' or '?'
 public:
-	void extractSentences(std::string text); //save results in class fields
+	std::vector<std::string> extractSentences(std::string text); //save results in class fields
 	static std::vector<std::string> extractWordsFromSentence(std::string sentence);
 	static std::vector<int> encodeString(std::string word);
 	std::vector<std::vector<int>> encodeSentence();
