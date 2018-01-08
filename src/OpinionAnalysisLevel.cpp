@@ -212,3 +212,20 @@ double OpinionAnalysisLevel::backpropagate(
 
 	return totalCost / (2 * trainingExamples.size());
 }
+
+
+void OpinionAnalysisLevel::initKnownConnections(const std::vector<std::pair<Eigen::MatrixXf, Eigen::MatrixXf>>& connections)
+{
+	for (int i = 0; i < connections.size(); i++)
+		this->layers[i]->initKnownConnections(connections[i]);
+}
+
+const std::vector<std::pair<Eigen::MatrixXf, Eigen::MatrixXf>> OpinionAnalysisLevel::getKnownConnections()
+{
+	std::vector<std::pair<Eigen::MatrixXf, Eigen::MatrixXf>> ret;
+
+	for (int i = 0; i < LAYERS; i++)
+		ret.push_back(this->layers[i]->getKnownConnections());
+
+	return ret;
+}
