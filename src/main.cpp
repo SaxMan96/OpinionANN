@@ -1,14 +1,35 @@
+
+#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <iomanip>
 #include <ctime>
 #include <vector>
 #include <fstream>
+#include <Windows.h>
 #include "../include/WordAnalysisLevel.h"
 #include "../include/OpinionInputLayer.h"
 #include "../include/OpinionAnalysisLevel.h"
 #include "../include/InputParser.h"
 
 using namespace std;
+
+//allows to get utf-8 line
+std::string readLine()
+{
+	WCHAR cc[256];
+	ULONG n;
+	char c[512];
+	ReadConsoleW(GetStdHandle(STD_INPUT_HANDLE), cc, RTL_NUMBER_OF(cc), &n, 0);
+	WideCharToMultiByte(CP_UTF8, 0, cc, -1, c, 512, 0, 0);
+
+	for (int i = 0; i < 512; i++)
+	{
+		if (c[i] == '\r' || c[i] == '\n')
+			c[i] = 0;
+	}
+
+	return c;
+}
 
 vector<pair<Eigen::MatrixXf, Eigen::MatrixXf>> readNetworkFile(string fileName, vector<int> neuronsNumbers) 
 {
@@ -206,19 +227,23 @@ void interactiveMode(OpinionAnalysisLevel* opinionAnalyzis, WordAnalysisLevel* w
 		{
 		case 1:
 			//-----------------------Analyze word------------------------
-			clrscr();
 			cout << "Podaj słowo i naciśnij ENTER" << endl;
-			cin >> word;
-			cout << (*wordAnalyzis->analyzeWord(parser.encodeString(word)));
+			word = readLine();
+			Eigen::MatrixXf* res  = wordAnalyzis->analyzeWord(parser.encodeString(word));
+			cout << rateToWords((*res)(0, 0));
+			if ((*res)(1, 0) >= 0.5)
+				cout << "neguje\n";
+			if ((*res)(2, 0) >= 0.5)
+				cout << "wzmacnia\n";
+			else if ((*res)(2, 0) <= -0.5)
+				cout << "osłabia\n";
 			get();
-			clrscr();
 			break;
 		case 2:
 			//----------------------Analyze opinion-----------------------
-			clrscr();
 			cout << "Wpisz opinię i kliknij Enter." << endl;
 			getline(cin, sent);//to ignore new line after option selection
-			getline(cin, sent);
+			sent = readLine();
 
 			for (auto sentence : parser.extractSentences(sent))
 			{
@@ -239,21 +264,24 @@ void interactiveMode(OpinionAnalysisLevel* opinionAnalyzis, WordAnalysisLevel* w
 			break;
 		case 3:
 			//----------------------------Exit---------------------------
-			clrscr();
 			cout << "DZIEKUJE ZA SKORZYSTANIE Z PROGRAMU.";
 			return;
 		default:
 			//-----------------------------Error-----------------------------
 			cout << "\nBLAD WYBORU.\nNacisnij Enter...";
 			get();
-			clrscr();
 			break;
 		}
 	}
 }
 
+
+#undef max
 int main(int argc, char** argv) 
 {
+	setlocale(LC_ALL, "PL_pl.UTF-8");
+	SetConsoleOutputCP(CP_UTF8);
+	SetConsoleCP(CP_UTF8);
 	std::cout << "Hello, World! I am neural network" << std::endl;
 
 	srand(time(NULL));
@@ -263,79 +291,18 @@ int main(int argc, char** argv)
 
 	if (argc == 0)
 	{
-		cout << "Test mode" << endl;
-		std::vector<int> input;
-		input.push_back(1);
-		input.push_back(3);
-		input.push_back(16);
-
-		WordAnalysisLevel* wordAnalysisLevel = new WordAnalysisLevel();
-		wordAnalysisLevel->initRandomConnections();
-		std::cout << *(wordAnalysisLevel->analyzeWord(input)) << std::endl << std::endl;
-
-		std::vector<int> input2;
-		input2.push_back(4);
-		input2.push_back(8);
-		input2.push_back(11);
-		input2.push_back(17);
-
-		std::cout << *(wordAnalysisLevel->analyzeWord(input2)) << std::endl << std::endl;
-
-		Eigen::MatrixXf expected(3, 1);
-		expected(0, 0) = 0.0f;
-		expected(1, 0) = -1.0f;
-		expected(2, 0) = 1.0f;
-
-		std::pair<std::vector<int>, Eigen::MatrixXf*> trainingExample(input, &expected);
-		std::pair<std::vector<int>, Eigen::MatrixXf*> trainingExample2(input2, &expected);
-
-		for (int i = 0; i < 200; i++)
-			std::cout << "WORD Test cost " << i << ": " << wordAnalysisLevel->backpropagate({ trainingExample, trainingExample2 }, 0.05f, 2) << std::endl;
-
-		std::cout << *(wordAnalysisLevel->analyzeWord(input)) << std::endl << std::endl;
-		std::cout << *(wordAnalysisLevel->analyzeWord(input2)) << std::endl << std::endl;
-
-		std::cout << std::endl;
-
-		std::vector<Eigen::MatrixXf> wordsAnalysisResult;
-		wordsAnalysisResult.push_back(*(wordAnalysisLevel->analyzeWord(input)));
-		wordsAnalysisResult.push_back(*(wordAnalysisLevel->analyzeWord(input2)));
-
-		std::vector<Eigen::MatrixXf> wordsAnalysisResult2;
-		wordsAnalysisResult2.push_back(*(wordAnalysisLevel->analyzeWord(input2)));
-		wordsAnalysisResult2.push_back(*(wordAnalysisLevel->analyzeWord(input)));
-
-		OpinionAnalysisLevel* opinionAnalysisLevel = new OpinionAnalysisLevel();
-		opinionAnalysisLevel->initRandomConnections();
-		opinionAnalysisLevel->addSentenceToInput(wordsAnalysisResult);
-		opinionAnalysisLevel->addSentenceToInput(wordsAnalysisResult2);
-		std::cout << *(opinionAnalysisLevel->analyzeOpinion()) << std::endl << std::endl;
-
-		std::vector<std::vector<Eigen::MatrixXf>> trainingSentences;
-		trainingSentences.push_back(wordsAnalysisResult);
-		trainingSentences.push_back(wordsAnalysisResult2);
-
-		Eigen::MatrixXf expectedSentenceResult(1, 1);
-		expectedSentenceResult(0, 0) = 1;
-
-		std::pair<std::vector<std::vector<Eigen::MatrixXf>>, Eigen::MatrixXf*> trainingOpinion(trainingSentences, &expectedSentenceResult);
-
-		for (int i = 0; i < 200; i++)
-			std::cout << "OPINION Test cost " << i << ": " << opinionAnalysisLevel->backpropagate({ trainingOpinion }, 0.05f, 1) << std::endl;
-
-		opinionAnalysisLevel->resetInput();
-		opinionAnalysisLevel->addSentenceToInput(wordsAnalysisResult);
-		opinionAnalysisLevel->addSentenceToInput(wordsAnalysisResult2);
-		std::cout << *(opinionAnalysisLevel->analyzeOpinion()) << std::endl << std::endl;
-
-		delete wordAnalysisLevel;
-		delete opinionAnalysisLevel;
-		getchar();
+		cout << "Usage:" << endl
+			<< "[opinion network file] [word network file]" << endl
+			<< "\t- Interactive mode" << endl
+			<< "[word network file] [test examples file] [learning factor] [max threads] [iterations] " << endl
+			<< "\t- Teach word network" << endl
+			<< "[opinion network file] [word network file] [test examples file] [learning factor] [max threads] [iterations] " << endl
+			<< "\t- Teach opinion network" << endl;
 	}
 	else if (argc == 2)
 	{
 		//interactive mode
-		//sentence network params file, word network params file
+		//opinion network params file, word network params file
 		WordAnalysisLevel* wordNetwork = new WordAnalysisLevel;
 		OpinionAnalysisLevel* opinionNetwork = new OpinionAnalysisLevel;
 
