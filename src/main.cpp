@@ -205,7 +205,7 @@ void interactiveMode(OpinionAnalysisLevel* opinionAnalyzis, WordAnalysisLevel* w
 		switch (decyzja)
 		{
 		case 1:
-			//-----------------------Wczytaj z pliku------------------------
+			//-----------------------Analyze word------------------------
 			clrscr();
 			cout << "Podaj słowo i naciśnij ENTER" << endl;
 			cin >> word;
@@ -214,7 +214,7 @@ void interactiveMode(OpinionAnalysisLevel* opinionAnalyzis, WordAnalysisLevel* w
 			clrscr();
 			break;
 		case 2:
-			//----------------------Wczytaj z klawiatury-----------------------
+			//----------------------Analyze opinion-----------------------
 			clrscr();
 			cout << "Wpisz opinię i kliknij Enter." << endl;
 			getline(cin, sent);//to ignore new line after option selection
@@ -238,12 +238,12 @@ void interactiveMode(OpinionAnalysisLevel* opinionAnalyzis, WordAnalysisLevel* w
 			cout << "Nacechowanie zdania: " + rateToWords(rate) << endl;
 			break;
 		case 3:
-			//----------------------------Wyjscie---------------------------
+			//----------------------------Exit---------------------------
 			clrscr();
 			cout << "DZIEKUJE ZA SKORZYSTANIE Z PROGRAMU.";
 			return;
 		default:
-			//-----------------------------Blad-----------------------------
+			//-----------------------------Error-----------------------------
 			cout << "\nBLAD WYBORU.\nNacisnij Enter...";
 			get();
 			clrscr();
