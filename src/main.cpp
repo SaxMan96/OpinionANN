@@ -216,6 +216,7 @@ void interactiveMode(OpinionAnalysisLevel* opinionAnalyzis, WordAnalysisLevel* w
 	float rate;
 	string fileName;
 	string word;
+	Eigen::MatrixXf* result;
 
 	int decyzja;
 	while (1)
@@ -228,14 +229,14 @@ void interactiveMode(OpinionAnalysisLevel* opinionAnalyzis, WordAnalysisLevel* w
 		case 1:
 			//-----------------------Analyze word------------------------
 			cout << "Podaj słowo i naciśnij ENTER" << endl;
-			word = readLine();
-			Eigen::MatrixXf* res  = wordAnalyzis->analyzeWord(parser.encodeString(word));
-			cout << rateToWords((*res)(0, 0));
-			if ((*res)(1, 0) >= 0.5)
+			word = readLine(); 
+			result = wordAnalyzis->analyzeWord(parser.encodeString(word));
+			cout << rateToWords((*result)(0, 0));
+			if ((*result)(1, 0) >= 0.5)
 				cout << "neguje\n";
-			if ((*res)(2, 0) >= 0.5)
+			if ((*result)(2, 0) >= 0.5)
 				cout << "wzmacnia\n";
-			else if ((*res)(2, 0) <= -0.5)
+			else if ((*result)(2, 0) <= -0.5)
 				cout << "osłabia\n";
 			get();
 			break;
