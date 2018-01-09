@@ -70,7 +70,7 @@ void OpinionAnalysisLevel::calculateGradients(OpinionAnalysisLevel* network,
 	{
 		localCopy.resetInput();
 		for (auto sentence : example.first)
-			localCopy.addSentenceToInput(sentence);//DAFUQ?
+			localCopy.addSentenceToInput(sentence);
 		auto* output = localCopy.analyzeOpinion();
 
 		Eigen::MatrixXf gradient = (*output - *example.second);
@@ -211,4 +211,21 @@ double OpinionAnalysisLevel::backpropagate(
 		delete e;
 
 	return totalCost / (2 * trainingExamples.size());
+}
+
+
+void OpinionAnalysisLevel::initKnownConnections(const std::vector<std::pair<Eigen::MatrixXf, Eigen::MatrixXf>>& connections)
+{
+	for (int i = 0; i < connections.size(); i++)
+		this->layers[i]->initKnownConnections(connections[i]);
+}
+
+const std::vector<std::pair<Eigen::MatrixXf, Eigen::MatrixXf>> OpinionAnalysisLevel::getKnownConnections()
+{
+	std::vector<std::pair<Eigen::MatrixXf, Eigen::MatrixXf>> ret;
+
+	for (int i = 0; i < LAYERS; i++)
+		ret.push_back(this->layers[i]->getKnownConnections());
+
+	return ret;
 }

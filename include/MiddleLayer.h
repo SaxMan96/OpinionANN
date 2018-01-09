@@ -19,7 +19,9 @@ public:
 
 	Eigen::MatrixXf* getWeights();
     void initRandomConnections();
-    void initKnownConnections();
+
+	void initKnownConnections(const std::pair<Eigen::MatrixXf, Eigen::MatrixXf>& connections);
+	std::pair<Eigen::MatrixXf, Eigen::MatrixXf> getKnownConnections();
 
 	void adjustConnections(Eigen::MatrixXf* diff);
 	void adjustBiases(Eigen::MatrixXf* diff);

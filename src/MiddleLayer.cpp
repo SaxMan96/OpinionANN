@@ -9,6 +9,8 @@ MiddleLayer::MiddleLayer(int neurons, int previousLayerNeurons) {
     this->connections = new Eigen::MatrixXf(neurons, previousLayerNeurons);
     this->bias = new Eigen::MatrixXf(neurons, 1);
     this->connections->setOnes();
+	delete this->output;
+	this->output = new Eigen::MatrixXf(neurons, 1);
 }
 
 MiddleLayer::MiddleLayer(const MiddleLayer &middleLayer) {
@@ -66,4 +68,15 @@ void MiddleLayer::adjustConnections(Eigen::MatrixXf* diff)
 void MiddleLayer::adjustBiases(Eigen::MatrixXf* diff)
 {
 	*this->bias += *diff;
+}
+
+void MiddleLayer::initKnownConnections(const std::pair<Eigen::MatrixXf, Eigen::MatrixXf>& connections)
+{
+	*this->connections = connections.first;
+	*this->bias = connections.second;
+}
+
+std::pair<Eigen::MatrixXf, Eigen::MatrixXf> MiddleLayer::getKnownConnections()
+{
+	return{ *this->connections, *this->bias };
 }
