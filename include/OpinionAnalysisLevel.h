@@ -19,9 +19,9 @@ private:
 		double* totalCost);
 public:
 	static const int LAYERS = 4; //input excluded, output included
-	static const int NEURONS_1ST_LAYER = 600;
-	static const int NEURONS_2ND_LAYER = 300;
-	static const int NEURONS_3RD_LAYER = 60;
+	static const int NEURONS_1ST_LAYER = 240;
+	static const int NEURONS_2ND_LAYER = 10;
+	static const int NEURONS_3RD_LAYER = 2;
 	static const int NEURONS_OUTPUT_LAYER = 1;
 
     OpinionAnalysisLevel();
