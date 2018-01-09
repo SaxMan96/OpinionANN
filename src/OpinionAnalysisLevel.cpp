@@ -113,7 +113,7 @@ double OpinionAnalysisLevel::backpropagate(
 	std::vector<std::vector<std::pair<std::vector<std::vector<Eigen::MatrixXf>>, Eigen::MatrixXf*>>*> examples;
 
 	std::vector<double*> costs;
-	std::vector<std::thread> threads;
+	std::vector<thread> threads;
 
 	int threadsN = maxThreads < trainingExamples.size() ? maxThreads : trainingExamples.size();
 

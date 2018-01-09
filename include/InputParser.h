@@ -1,7 +1,3 @@
-//
-// Created by MateuszDorobek on 07.01.2018.
-//
-
 #ifndef PSZTUTILITIES_INPUTPARSER_H
 #define PSZTUTILITIES_INPUTPARSER_H
 #include <vector>

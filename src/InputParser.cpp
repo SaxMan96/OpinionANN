@@ -1,7 +1,4 @@
-﻿//
-// Created by MateuszDorobek on 07.01.2018.
-//
-#include <algorithm>
+﻿#include <algorithm>
 #include <string>
 #include "..\include\InputParser.h"
 
