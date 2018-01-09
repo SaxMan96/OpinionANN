@@ -30,7 +30,7 @@ std::vector<std::pair<Eigen::MatrixXf, Eigen::MatrixXf>> FileManager::readNetwor
     return vec;
 }
 
-void writeNetworkFile(std::string fileName, std::vector<std::pair<Eigen::MatrixXf, Eigen::MatrixXf>> network)
+void FileManager::writeNetworkFile(std::string fileName, std::vector<std::pair<Eigen::MatrixXf, Eigen::MatrixXf>> network)
 {
     std::string line;
     std::ofstream myFile(fileName);
