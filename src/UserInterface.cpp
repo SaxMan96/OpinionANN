@@ -2,6 +2,27 @@
 #include "../include/InputParser.h"
 #include "../include/FileManager.h"
 
+#include <Windows.h>
+#undef max
+
+//allows to get utf-8 line
+std::string readLine()
+{
+	WCHAR cc[256];
+	ULONG n;
+	char c[512];
+	ReadConsoleW(GetStdHandle(STD_INPUT_HANDLE), cc, RTL_NUMBER_OF(cc), &n, 0);
+	WideCharToMultiByte(CP_UTF8, 0, cc, -1, c, 512, 0, 0);
+	
+	for (int i = 0; i < 512; i++)
+		{
+		if (c[i] == '\r' || c[i] == '\n')
+			c[i] = 0;
+	}
+	
+	return c;
+}
+
 std::string UserInterface::rateToWords(float rate) {
     if (rate<-1.0 || rate>1.0)
         return "wystąpił błąd\n";
@@ -27,13 +48,6 @@ std::string UserInterface::rateToWords(float rate) {
     else if (rate >= 0.7 && rate<1.0)
         return "bardzo pozytywne\n";
 
-}
-
-void UserInterface::clrscr()
-{
-    std::cin.sync();
-    for (int i = 0; i<25; ++i)
-        std::cout << "\n";
 }
 
 
@@ -82,6 +96,7 @@ void UserInterface::interactiveMode(OpinionAnalysisLevel* opinionAnalysis, WordA
     float rate;
     string fileName;
     string word;
+	Eigen::MatrixXf* result;
 
     int decyzja;
     while (1)
@@ -93,19 +108,22 @@ void UserInterface::interactiveMode(OpinionAnalysisLevel* opinionAnalysis, WordA
         {
             case 1:
                 //-----------------------Analyze word------------------------
-                clrscr();
-                cout << "Podaj słowo i naciśnij ENTER" << endl;
-                cin >> word;
-                cout << (*wordAnalysis->analyzeWord(parser.encodeString(word)));
-                get();
-                clrscr();
+				word = readLine();
+				result = wordAnalysis->analyzeWord(parser.encodeString(word));
+				cout << rateToWords((*result)(0, 0));
+				if ((*result)(1, 0) >= 0.5)
+					cout << "neguje\n";
+				if ((*result)(2, 0) >= 0.5)
+					cout << "wzmacnia\n";
+				else if ((*result)(2, 0) <= -0.5)
+					cout << "osłabia\n";
                 break;
+				get();
             case 2:
                 //----------------------Analyze opinion-----------------------
-                clrscr();
                 cout << "Wpisz opinię i kliknij Enter." << endl;
                 getline(cin, sent);//to ignore new line after option selection
-                getline(cin, sent);
+				sent = readLine();
 
                 for (auto sentence : parser.extractSentences(sent))
                 {
@@ -126,14 +144,12 @@ void UserInterface::interactiveMode(OpinionAnalysisLevel* opinionAnalysis, WordA
                 break;
             case 3:
                 //----------------------------Exit---------------------------
-                clrscr();
                 cout << "DZIEKUJE ZA SKORZYSTANIE Z PROGRAMU.";
                 return;
             default:
                 //-----------------------------Error-----------------------------
                 cout << "\nBLAD WYBORU.\nNacisnij Enter...";
                 get();
-                clrscr();
                 break;
         }
     }
