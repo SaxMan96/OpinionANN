@@ -17,6 +17,8 @@ set(SOURCE_FILES
 	src/WordsInputLayer.cpp
 	src/MiddleLayer.cpp
         src/OpinionInputLayer.cpp
-	src/SentimentalAnalysis.cpp)
+	src/SentimentalAnalysis.cpp
+		src/FileManager.cpp
+		src/UserInterface.cpp )
 
 add_executable(OpinionANN ${SOURCE_FILES})
