@@ -33,13 +33,13 @@ std::string UserInterface::rateToWords(float rate) {
     else if (rate >= -0.7 && rate<-0.4)
         return "negatywne\n";
 
-    else if (rate >= -0.4 && rate<-0.1)
+    else if (rate >= -0.4 && rate<-0.2)
         return "lekkonegatywne\n";
 
-    else if (rate >= -0.1 && rate<0.1)
+    else if (rate >= -0.2 && rate<0.2)
         return "neutralne\n";
 
-    else if (rate >= 0.1 && rate<0.4)
+    else if (rate >= 0.2 && rate<0.4)
         return "lekko pozytywne\n";
 
     else if (rate >= 0.4 && rate<0.7)
@@ -140,7 +140,7 @@ void UserInterface::interactiveMode(OpinionAnalysisLevel* opinionAnalysis, WordA
 
                 opinionAnalysis->resetInput();
 
-                cout << "Nacechowanie zdania: " + rateToWords(rate) << endl;
+                cout << "Nacechowanie wypowiedzi: " + rateToWords(rate) << endl;
                 break;
             case 3:
                 //----------------------------Exit---------------------------
@@ -207,7 +207,7 @@ void UserInterface::performWordLevelTraining(char **argv) {
     for (int i = 0; i < runs; i++)
     {
         cout << "Wykonano " << i + 1 << " z " << runs << "... ";
-        cost = network->backpropagate(trainingData, learningSpeed, threads);
+//        cost = network->backpropagate(trainingData, learningSpeed, threads);
         cout << setprecision(numeric_limits<float>::max_digits10) << cost << endl;
 
         if (cost <= bestCost)
@@ -279,7 +279,7 @@ void UserInterface::performOpinionLevelTraining(char **argv) {
     {
         cout << "Wykonano " << i + 1 << " z " << runs << "... ";
 
-        cost = opinionNetwork->backpropagate(trainingExamples, learningSpeed, threads);
+//        cost = opinionNetwork->backpropagate(trainingExamples, learningSpeed, threads);
 
         cout << setprecision(numeric_limits<float>::max_digits10) << cost << endl;
         if (cost < bestCost)
