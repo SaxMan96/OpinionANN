@@ -98,13 +98,13 @@ void UserInterface::interactiveMode(OpinionAnalysisLevel* opinionAnalysis, WordA
     string word;
 	Eigen::MatrixXf* result;
 
-    int decyzja;
+    int decision;
     while (1)
     {
-        decyzja = -1;
+        decision = -1;
         cout << "MENU:\n<1>Analiza słowa\n<2>Analiza opini\n<3>Wyjscie\n";
-        decyzja = chooseMode();
-        switch (decyzja)
+        decision = chooseMode();
+        switch (decision)
         {
             case 1:
                 //-----------------------Analyze word------------------------
@@ -187,7 +187,7 @@ void UserInterface::activateInteractions(char** argv) {
 
 void UserInterface::performWordLevelTraining(char **argv) {
     //network params file, input file, learning speed, threads, runs
-    cout << "Teaching word level" << endl;
+    cout << "Uczenie poziomu analizy słów" << endl;
 
     WordAnalysisLevel* network = new WordAnalysisLevel;
 
@@ -206,7 +206,7 @@ void UserInterface::performWordLevelTraining(char **argv) {
 
     for (int i = 0; i < runs; i++)
     {
-        cout << "Run " << i + 1 << " out of " << runs << "... ";
+        cout << "Wykonano " << i + 1 << " z " << runs << "... ";
         cost = network->backpropagate(trainingData, learningSpeed, threads);
         cout << setprecision(numeric_limits<float>::max_digits10) << cost << endl;
 
@@ -221,12 +221,12 @@ void UserInterface::performWordLevelTraining(char **argv) {
         }
     }
 
-    cout << "Saving" << endl;
+    cout << "Zapisywanie..." << endl;
     FileManager::writeNetworkFile(argv[0], networkData);
 }
 
 void UserInterface::performOpinionLevelTraining(char **argv) {
-    cout << "Teaching opinion level" << endl;
+    cout << "Uczenie poziomu analizy opinii" << endl;
     //teach sentence layer
     //opinion network params file, word network params file, input file, learning speed, threads, runs
     WordAnalysisLevel* wordNetwork = new WordAnalysisLevel;
@@ -277,7 +277,7 @@ void UserInterface::performOpinionLevelTraining(char **argv) {
 
     for (int i = 0; i < runs; i++)
     {
-        cout << "Run " << i + 1 << " out of " << runs << "... ";
+        cout << "Wykonano " << i + 1 << " z " << runs << "... ";
 
         cost = opinionNetwork->backpropagate(trainingExamples, learningSpeed, threads);
 
@@ -293,6 +293,6 @@ void UserInterface::performOpinionLevelTraining(char **argv) {
         }
     }
 
-    cout << "Saving" << endl;
+    cout << "Zapisywanie..." << endl;
     FileManager::writeNetworkFile(argv[0], opinionNetworkData);
 }
