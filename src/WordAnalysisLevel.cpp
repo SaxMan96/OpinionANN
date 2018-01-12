@@ -58,6 +58,7 @@ void WordAnalysisLevel::calculateGradients(WordAnalysisLevel* network,
 
 	for (auto example : *trainingExamples)
 	{
+		//calculate output
 		auto* output = localCopy.analyzeWord(example.first);
 		Eigen::MatrixXf gradient = (*output - *example.second);
 		Eigen::MatrixXf input = *localCopy.layers[LAYERS - 1]->getWeightedInput();
@@ -75,7 +76,7 @@ void WordAnalysisLevel::calculateGradients(WordAnalysisLevel* network,
 			*(*weightsGradients)[LAYERS - 1 - i] += delta * prevLevelOutput->transpose();
 			*(*biasesGradients)[LAYERS - 1 - i] += delta;
 
-			if (i != LAYERS - 1) //count error for previous layer
+			if (i != LAYERS - 1) //calculate error for previous layer
 			{
 				delta = localCopy.layers[LAYERS - 1 - i]->getWeights()->transpose() * delta;
 
@@ -175,6 +176,8 @@ double WordAnalysisLevel::backpropagate(
 		total *= -learningSpeed / (float)trainingExamples.size();
 		layers[i]->adjustBiases(&total);
 	}
+
+	//delete all temporary structures
 
 	for (auto e : weightsGradients)
 	{

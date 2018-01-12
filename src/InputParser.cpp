@@ -82,8 +82,12 @@ string InputParser::checkWordForNonLetters(string word) {
 
 std::vector<int> InputParser::encodeString(std::string word) {
 	std::vector<int> vec;
-	vector<string> letters = { u8"a",u8"ą",u8"b",u8"c",u8"ć",u8"d",u8"e",u8"ę",u8"f",u8"g",u8"h",u8"i",u8"j",u8"k",u8"l",u8"ł",u8"m",u8"n",u8"ń",u8"o",u8"ó",u8"p",u8"r",u8"s",u8"ś",u8"t",u8"u",u8"w",u8"y",u8"z",u8"ź",u8"ż" };
-	vector<string> upperCaseLetters = { u8"A",u8"Ą",u8"B",u8"C",u8"Ć",u8"D",u8"E",u8"Ę",u8"F",u8"G",u8"H",u8"I",u8"J",u8"L",u8"L",u8"Ł",u8"M",u8"N",u8"Ń",u8"O",u8"Ó",u8"P",u8"R",u8"S",u8"Ś",u8"T",u8"U",u8"W",u8"Y",u8"Z",u8"Ź",u8"Ż" };
+	vector<string> letters = { u8"a",u8"ą",u8"b",u8"c",u8"ć",u8"d",u8"e",u8"ę",u8"f",u8"g",u8"h",u8"i",u8"j",u8"k",u8"l",
+							   u8"ł",u8"m",u8"n",u8"ń",u8"o",u8"ó",u8"p",u8"r",u8"s",u8"ś",u8"t",u8"u",u8"w",u8"y",u8"z",
+							   u8"ź",u8"ż" };
+	vector<string> upperCaseLetters = { u8"A",u8"Ą",u8"B",u8"C",u8"Ć",u8"D",u8"E",u8"Ę",u8"F",u8"G",u8"H",u8"I",u8"J",
+										u8"L",u8"L",u8"Ł",u8"M",u8"N",u8"Ń",u8"O",u8"Ó",u8"P",u8"R",u8"S",u8"Ś",u8"T",
+										u8"U",u8"W",u8"Y",u8"Z",u8"Ź",u8"Ż" };
 	
 	for (int i = 0; i<word.size(); i++)
 	{

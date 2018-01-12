@@ -12,7 +12,7 @@ WordsInputLayer::WordsInputLayer(const WordsInputLayer &wordsInputLayer) {
     this->output = new Eigen::MatrixXf(*wordsInputLayer.output);
 }
 
-//expected input is a vector of int values. Every int value stands for number of letter - a=1, b=2, c=3...
+//expected input is a vector of int values. Every int value stands for number of letter - a=0, ą=1, b=2...
 // Case insensitive.
 void WordsInputLayer::computeOutput(std::vector<int> encodedString) {
     output->setZero();

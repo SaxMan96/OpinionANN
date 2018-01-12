@@ -34,7 +34,7 @@ std::string UserInterface::rateToWords(float rate) {
         return "negatywne\n";
 
     else if (rate >= -0.4 && rate<-0.2)
-        return "lekkonegatywne\n";
+        return "lekko negatywne\n";
 
     else if (rate >= -0.2 && rate<0.2)
         return "neutralne\n";
@@ -83,7 +83,7 @@ int UserInterface::chooseMode()
             iss >> wybor;
             return wybor;
         }
-        else std::cout << "Niepoprawny wybor. Wybierz cyfre z przedzialu <1,3>\n" << std::endl;
+        else std::cout << "Niepoprawny wybór. Wybierz cyfrę z przedziału <1,3>\n" << std::endl;
     }
 }
 
@@ -102,7 +102,7 @@ void UserInterface::interactiveMode(OpinionAnalysisLevel* opinionAnalysis, WordA
     while (1)
     {
         decision = -1;
-        cout << "MENU:\n<1>Analiza słowa\n<2>Analiza opini\n<3>Wyjscie\n";
+        cout << "MENU:\n<1>Analiza słowa\n<2>Analiza opinii\n<3>Wyjscie\n";
         decision = chooseMode();
         switch (decision)
         {
@@ -144,11 +144,11 @@ void UserInterface::interactiveMode(OpinionAnalysisLevel* opinionAnalysis, WordA
                 break;
             case 3:
                 //----------------------------Exit---------------------------
-                cout << "DZIEKUJE ZA SKORZYSTANIE Z PROGRAMU.";
+                cout << "DZIĘKUJĘ ZA SKORZYSTANIE Z PROGRAMU.";
                 return;
             default:
                 //-----------------------------Error-----------------------------
-                cout << "\nBLAD WYBORU.\nNacisnij Enter...";
+                cout << "\nBŁĄD WYBORU.\nNacisnij Enter...";
                 get();
                 break;
         }
@@ -207,7 +207,7 @@ void UserInterface::performWordLevelTraining(char **argv) {
     for (int i = 0; i < runs; i++)
     {
         cout << "Wykonano " << i + 1 << " z " << runs << "... ";
-//        cost = network->backpropagate(trainingData, learningSpeed, threads);
+        cost = network->backpropagate(trainingData, learningSpeed, threads);
         cout << setprecision(numeric_limits<float>::max_digits10) << cost << endl;
 
         if (cost <= bestCost)
@@ -279,7 +279,7 @@ void UserInterface::performOpinionLevelTraining(char **argv) {
     {
         cout << "Wykonano " << i + 1 << " z " << runs << "... ";
 
-//        cost = opinionNetwork->backpropagate(trainingExamples, learningSpeed, threads);
+        cost = opinionNetwork->backpropagate(trainingExamples, learningSpeed, threads);
 
         cout << setprecision(numeric_limits<float>::max_digits10) << cost << endl;
         if (cost < bestCost)

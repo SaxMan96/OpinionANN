@@ -17,7 +17,6 @@ set(SOURCE_FILES
 	src/WordsInputLayer.cpp
 	src/MiddleLayer.cpp
         src/OpinionInputLayer.cpp
-	src/SentimentalAnalysis.cpp
 		src/FileManager.cpp
 		src/UserInterface.cpp )
 
