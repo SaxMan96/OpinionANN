@@ -68,6 +68,7 @@ void OpinionAnalysisLevel::calculateGradients(OpinionAnalysisLevel* network,
 
 	for (auto example : *trainingExamples)
 	{
+		//calculate output
 		localCopy.resetInput();
 		for (auto sentence : example.first)
 			localCopy.addSentenceToInput(sentence);
@@ -89,7 +90,7 @@ void OpinionAnalysisLevel::calculateGradients(OpinionAnalysisLevel* network,
 			*(*weightsGradients)[LAYERS - 1 - i] += delta * prevLevelOutput->transpose();
 			*(*biasesGradients)[LAYERS - 1 - i] += delta;
 
-			if (i != LAYERS - 1) //count error for previous layer
+			if (i != LAYERS - 1) //calculate error for previous layer
 			{
 				delta = localCopy.layers[LAYERS - 1 - i]->getWeights()->transpose() * delta;
 
@@ -192,6 +193,8 @@ double OpinionAnalysisLevel::backpropagate(
 		total *= -learningSpeed / (float)trainingExamples.size();
 		layers[i]->adjustBiases(&total);
 	}
+
+	//delete all temporary structures
 
 	for (auto e : weightsGradients)
 	{
