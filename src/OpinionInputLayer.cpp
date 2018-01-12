@@ -14,7 +14,11 @@ OpinionInputLayer::OpinionInputLayer(const OpinionInputLayer &opinionInputLayer)
 Eigen::MatrixXf* OpinionInputLayer::getOutput() {
     return this->output;
 }
-
+/*
+ * Function places results of calculations from word analysis level in opinion analysis level's input layer.
+ * Consecutive sentences start every 72 neurons and fill as much of them as they need,
+ * depending on how many words they include.
+ */
 void OpinionInputLayer::addSentence(std::vector<Eigen::MatrixXf> wordsAnalysisLevel){
     if (this->sentenceCounter >= this->MAX_SENTENCES_CONSIDERED) return;
     for (int i = 0; i < this->MAX_WORDS_CONSIDERED && i < wordsAnalysisLevel.size(); i++){

@@ -34,7 +34,7 @@ std::string UserInterface::rateToWords(float rate) {
         return "negatywne\n";
 
     else if (rate >= -0.4 && rate<-0.2)
-        return "lekkonegatywne\n";
+        return "lekko negatywne\n";
 
     else if (rate >= -0.2 && rate<0.2)
         return "neutralne\n";
