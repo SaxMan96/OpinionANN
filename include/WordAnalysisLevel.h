@@ -2,35 +2,15 @@
 #define NEURAL_NETWORK_WORDANALYSISNETWORK_H
 
 
-#include <vector>
-#include "MiddleLayer.h"
-#include "WordsInputLayer.h"
-#include <Eigen>
+#include "NeuralNetwork.h"
 
-class WordAnalysisLevel {
-private:
-    static const int LAYERS = 3; //input excluded, output included
-    std::vector<MiddleLayer *> layers;
-    WordsInputLayer* inputLayer;
-
-	static void calculateGradients(WordAnalysisLevel* network,
-		std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>* trainingExamples,
-		std::vector<Eigen::MatrixXf*>* weightsGradients,
-		std::vector<Eigen::MatrixXf*>* biasesGradients,
-		double* totalCost);
+class WordAnalysisLevel : public NeuralNetwork {
 public:
 	static const int NEURONS_1ST_LAYER = 600;
 	static const int NEURONS_2ND_LAYER = 60;
     static const int NEURONS_OUTPUT_LAYER = 3;
-    WordAnalysisLevel();
-    WordAnalysisLevel(const WordAnalysisLevel &wordAnalysisLevel);
-    void initRandomConnections();
-	void initKnownConnections(const std::vector<std::pair<Eigen::MatrixXf, Eigen::MatrixXf>>& connections);
-	const std::vector<std::pair<Eigen::MatrixXf, Eigen::MatrixXf>> getKnownConnections();
-    Eigen::MatrixXf* analyzeWord(std::vector<int> encodedWord);
-    ~WordAnalysisLevel();
 
-	double backpropagate(const std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>>& trainingExamples, float learningSpeed, int maxThreads);
+    WordAnalysisLevel();
 };
 
 

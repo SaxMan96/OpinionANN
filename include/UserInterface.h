@@ -8,11 +8,11 @@
 #include <fstream>
 #include <sstream>
 #include "OpinionAnalysisLevel.h"
+#include "WordAnalysisLevel.h"
 
 class UserInterface {
 public:
     static std::string rateToWords(float rate);
-    static void clrscr();
     static void get();
     static bool isFloat(std::string string);
     static int chooseMode();

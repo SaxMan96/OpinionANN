@@ -9,6 +9,9 @@
 #include <vector>
 #include <fstream>
 
+#include "WordsInputLayer.h"
+#include "OpinionInputLayer.h"
+
 class FileManager {
 public:
     struct sentenceRateStruct {
@@ -18,7 +21,7 @@ public:
     static std::vector<std::pair<Eigen::MatrixXf, Eigen::MatrixXf>>
         readNetworkFile(std::string fileName, std::vector<int> neuronsNumbers);
     static void writeNetworkFile(std::string fileName, std::vector<std::pair<Eigen::MatrixXf, Eigen::MatrixXf>> network);
-    static std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>> readWordTrainingFile(std::string fileName);
+    static std::vector<std::pair<Input*, Eigen::MatrixXf*>> readWordTrainingFile(std::string fileName);
     static std::vector<sentenceRateStruct> readSentenceTrainingFile(std::string fileName);
 };
 

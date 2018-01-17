@@ -17,6 +17,9 @@ set(SOURCE_FILES
 	src/WordsInputLayer.cpp
 	src/MiddleLayer.cpp
         src/OpinionInputLayer.cpp
+        src/InputLayer.cpp
+        src/NeuralNetwork.cpp
+        src/NeuronLayer.cpp
 		src/FileManager.cpp
 		src/UserInterface.cpp )
 

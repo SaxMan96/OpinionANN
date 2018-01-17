@@ -2,14 +2,15 @@
 #define NEURAL_NETWORK_MIDDLELAYER_H
 
 #include <Eigen>
-#include "WordsInputLayer.h"
+#include "NeuronLayer.h"
 
-class MiddleLayer: public WordsInputLayer {
+class MiddleLayer : public NeuronLayer {
 protected:
     int neurons;
     Eigen::MatrixXf *connections;
     Eigen::MatrixXf *bias;
 	Eigen::MatrixXf *weitghtedInput = nullptr;
+	Eigen::MatrixXf *output;
 public:
     MiddleLayer(int neurons, int previousLayerNeurons);
     MiddleLayer(const MiddleLayer &middleLayer);

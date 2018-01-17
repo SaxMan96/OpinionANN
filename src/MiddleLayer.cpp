@@ -4,16 +4,15 @@
 #include <math.h>
 #include "../include/MiddleLayer.h"
 
-MiddleLayer::MiddleLayer(int neurons, int previousLayerNeurons) {
+MiddleLayer::MiddleLayer(int neurons, int previousLayerNeurons) : NeuronLayer(neurons) {
     this->neurons = neurons;
     this->connections = new Eigen::MatrixXf(neurons, previousLayerNeurons);
     this->bias = new Eigen::MatrixXf(neurons, 1);
     this->connections->setOnes();
-	delete this->output;
 	this->output = new Eigen::MatrixXf(neurons, 1);
 }
 
-MiddleLayer::MiddleLayer(const MiddleLayer &middleLayer) {
+MiddleLayer::MiddleLayer(const MiddleLayer &middleLayer) : NeuronLayer(middleLayer.getNeuronNumber()) {
     this->neurons = middleLayer.neurons;
     this->connections = new Eigen::MatrixXf(*(middleLayer.connections));
     this->bias = new Eigen::MatrixXf(*(middleLayer.bias));

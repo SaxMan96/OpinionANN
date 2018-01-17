@@ -11,7 +11,6 @@ public:
 	std::vector<std::string> extractSentences(std::string text); //save results in class fields
 	static std::vector<std::string> extractWordsFromSentence(std::string sentence);
 	static std::vector<int> encodeString(std::string word);
-	std::vector<std::vector<int>> encodeSentence();
 	std::vector<std::string> getSentences() { return sentences; };
 private:
 	void push(std::string);
