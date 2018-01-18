@@ -22,16 +22,23 @@ MiddleLayer::MiddleLayer(const MiddleLayer &middleLayer) : NeuronLayer(middleLay
 void MiddleLayer::computeOutput(Eigen::MatrixXf* previousOutput) {
 	if (output != nullptr) delete output;
 	if (weitghtedInput != nullptr) delete weitghtedInput;
+    //multiply output of previous neuron layer by connections' weights
     Eigen::Product<Eigen::MatrixXf, Eigen::MatrixXf> product =  (*connections) * (*previousOutput);
 
 	weitghtedInput = new Eigen::MatrixXf(product);
 	output = new Eigen::MatrixXf(product);
 
+    //update output by summing up the multiplication results and biases
+    // and calculating value of activation function (arctan)
     for (int i = 0; i < output->cols(); i++){
         for (int j = 0; j < output->rows(); j++){
-            (*output)(j, i) = atan((*output)(j, i) + (*bias)(j, i))/(M_PI_2);
+            (*output)(j, i) = activationFunction((*output)(j, i) + (*bias)(j, i));
         }
     }
+}
+
+float MiddleLayer::activationFunction(float x) {
+    atan(x)/M_PI_2;
 }
 
 Eigen::MatrixXf* MiddleLayer::getOutput() {

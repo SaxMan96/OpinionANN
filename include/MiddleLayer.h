@@ -11,6 +11,8 @@ protected:
     Eigen::MatrixXf *bias;
 	Eigen::MatrixXf *weitghtedInput = nullptr;
 	Eigen::MatrixXf *output;
+
+	float activationFunction(float sum);
 public:
     MiddleLayer(int neurons, int previousLayerNeurons);
     MiddleLayer(const MiddleLayer &middleLayer);
