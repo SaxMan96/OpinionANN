@@ -4,6 +4,7 @@
 
 #include "../include/NeuralNetwork.h"
 
+//class for opinion analysis
 class OpinionAnalysisLevel : public NeuralNetwork {
 public:
 	static const int NEURONS_1ST_LAYER = 240;

@@ -3,6 +3,7 @@
 
 #include <Eigen>
 
+//a single layer of neurons
 class NeuronLayer
 {
 public:

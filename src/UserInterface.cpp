@@ -61,13 +61,6 @@ void UserInterface::get()
 }
 
 
-bool UserInterface::isFloat(std::string myString) {
-    std::istringstream iss(myString);
-    float f;
-    iss >> std::noskipws >> f;
-    return iss.eof() && !iss.fail();
-}
-
 int UserInterface::chooseMode()
 {
     while (1)

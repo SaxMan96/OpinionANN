@@ -18,6 +18,7 @@ protected:
 public:
 	struct WordsInput : Input
 	{
+		//word encoded as numbers, one for each consecutive letter
 		std::vector<int> encodedString;
 	};
 

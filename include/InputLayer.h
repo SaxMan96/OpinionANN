@@ -5,6 +5,7 @@
 #include "NeuronLayer.h"
 #include "Input.h"
 
+//neuron layer for input
 class InputLayer : public NeuronLayer
 {
 public:

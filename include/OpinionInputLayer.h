@@ -16,15 +16,18 @@ private:
     int sentenceCounter = 0;
     Eigen::MatrixXf *output;
 
+	//adds single sentence to input
 	void addSentence(std::vector<Eigen::MatrixXf> wordsAnalysisResults);
+	//resets input
 	void reset();
 
 public:
 	struct OpinionInput : ::Input
 	{
+		//vector of sentences, each sentence is a vector of analysed words
 		std::vector<std::vector<Eigen::MatrixXf>> sentences;
 	};
-
+	
     Eigen::MatrixXf* getOutput();
 	void setInput(Input* input);
 
