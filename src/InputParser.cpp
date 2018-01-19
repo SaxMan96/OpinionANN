@@ -1,7 +1,8 @@
-﻿#include <algorithm>
+#include <algorithm>
 #include <string>
 #include "..\include\InputParser.h"
 
+//Extracting sentences out of full text
 std::vector<std::string> InputParser::extractSentences(std::string text) {
 	this->sentences.clear();
 	text = toLower(text);
@@ -10,6 +11,7 @@ std::vector<std::string> InputParser::extractSentences(std::string text) {
 	size_t pos2 = 0;
 	size_t pos3 = 0;
 	std::string token;
+	//removing  newline escape sequence '\n'  from text
 	while ((pos = text.find('\n')) != std::string::npos)
 		std::replace(text.begin(), text.end(), '\n', ' ');
 	while ((pos1 = text.find('.')) != std::string::npos ||
@@ -27,7 +29,7 @@ std::vector<std::string> InputParser::extractSentences(std::string text) {
 
 	return this->sentences;
 }
-
+// adding sequences into set
 void InputParser::push(std::string s) {
 	while (s.at(0) == ' ')
 		s = s.substr(1, s.size());
@@ -35,17 +37,18 @@ void InputParser::push(std::string s) {
 		return;
 	sentences.push_back(s);
 };
-
+//changing letters to lover case
 string InputParser::toLower(string text) {
 	std::transform(text.begin(), text.end(), text.begin(), ::tolower);
 	return text;
 }
-
+//splitting sequences into set of words
 std::vector<std::string> InputParser::extractWordsFromSentence(std::string sent) {
 	sent = toLower(sent);
 	std::vector<std::string> ret;
 	size_t pos = 0;
 	std::string token;
+	//removing  newline escape sequence '\n'  from text
 	while (sent.find('\n') != std::string::npos)
 		std::replace(sent.begin(), sent.end(), '\n', ' ');
 	while ((pos = sent.find(' ')) != std::string::npos) {
@@ -56,6 +59,7 @@ std::vector<std::string> InputParser::extractWordsFromSentence(std::string sent)
 			sent.erase(0, pos + 1);
 			continue;
 		}
+		//remove non-letters from word
 		token = checkWordForNonLetters(token);
 		if (token.size()>0)
 			ret.push_back(token);
@@ -66,12 +70,14 @@ std::vector<std::string> InputParser::extractWordsFromSentence(std::string sent)
 
 string InputParser::checkWordForNonLetters(string word) {
 	int pos = 0;
+	//removing non-letters from begin of the word
 	while (word.size()>0 && !((word.at(pos) <= 'z' && word.at(pos) >= 'a') || (word.at(pos) <= 'Z' && word.at(pos) >= 'A')))
 		word.erase(pos, pos + 1);
 	pos = word.size() - 1;
 	if (word.size() == 0)
 		return word;
 	char c;
+	//removing non-letters from end of the word
 	while (!((word.at(pos) <= 'z' && word.at(pos) >= 'a') || (word.at(pos) <= 'Z' && word.at(pos) >= 'A'))) {
 		c = word.at(pos);
 		word.erase(pos, pos + 1);
@@ -79,7 +85,7 @@ string InputParser::checkWordForNonLetters(string word) {
 	}
 	return word;
 }
-
+//encode ascii and u8 characters from string and return it as a set
 std::vector<int> InputParser::encodeString(std::string word) {
 	std::vector<int> vec;
 	vector<string> letters = { u8"a",u8"ą",u8"b",u8"c",u8"ć",u8"d",u8"e",u8"ę",u8"f",u8"g",u8"h",u8"i",u8"j",u8"k",u8"l",
@@ -92,15 +98,18 @@ std::vector<int> InputParser::encodeString(std::string word) {
 	for (int i = 0; i<word.size(); i++)
 	{
 		int code = -1;
+		
 		for (int j = 0; j<letters.size(); j++)
 			if (word.substr(i, letters[j].size()) == letters[j]) {
 				code = j;
+				//u8 chars have twice bigger size than ascii chars, so we have to add this size to corectly read next letter
 				i += letters[j].size() - 1;
 				break;
 			}
 		for (int j = 0; j<upperCaseLetters.size(); j++)
 			if (word.substr(i, upperCaseLetters[j].size()) == upperCaseLetters[j]) {
 				code = j;
+				//u8 chars have twice bigger size than ascii chars, so we have to add this size to corectly read next letter
 				i += upperCaseLetters[j].size() - 1;
 				break;
 			}
