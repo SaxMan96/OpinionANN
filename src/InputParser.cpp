@@ -37,7 +37,7 @@ void InputParser::push(std::string s) {
 		return;
 	sentences.push_back(s);
 };
-//changing letters to lover case
+//changing letters to lower case
 string InputParser::toLower(string text) {
 	std::transform(text.begin(), text.end(), text.begin(), ::tolower);
 	return text;
@@ -102,14 +102,14 @@ std::vector<int> InputParser::encodeString(std::string word) {
 		for (int j = 0; j<letters.size(); j++)
 			if (word.substr(i, letters[j].size()) == letters[j]) {
 				code = j;
-				//u8 chars have twice bigger size than ascii chars, so we have to add this size to corectly read next letter
+				//u8 chars have twice bigger size than ascii chars, so we have to add this size to correctly read next letter
 				i += letters[j].size() - 1;
 				break;
 			}
 		for (int j = 0; j<upperCaseLetters.size(); j++)
 			if (word.substr(i, upperCaseLetters[j].size()) == upperCaseLetters[j]) {
 				code = j;
-				//u8 chars have twice bigger size than ascii chars, so we have to add this size to corectly read next letter
+				//u8 chars have twice bigger size than ascii chars, so we have to add this size to correctly read next letter
 				i += upperCaseLetters[j].size() - 1;
 				break;
 			}
