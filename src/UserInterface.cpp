@@ -5,7 +5,7 @@
 #include <Windows.h>
 #undef max
 
-//allows to get utf-8 line
+//allows to get utf-8 line from console
 std::string readLine()
 {
 	WCHAR cc[256];
@@ -22,7 +22,7 @@ std::string readLine()
 	
 	return c;
 }
-
+//transforms float rate <-1,1> to terms describing characteristic
 std::string UserInterface::rateToWords(float rate) {
     if (rate<-1.0 || rate>1.0)
         return "wystąpił błąd\n";
@@ -50,7 +50,7 @@ std::string UserInterface::rateToWords(float rate) {
 
 }
 
-
+//wait for user to enter any key, then continue
 void UserInterface::get()
 {
     std::cin.ignore(1024, '\n');
@@ -58,14 +58,14 @@ void UserInterface::get()
     std::cin.get();
 }
 
-
+//check if passed string contains float value
 bool UserInterface::isFloat(std::string myString) {
     std::istringstream iss(myString);
     float f;
     iss >> std::noskipws >> f;
     return iss.eof() && !iss.fail();
 }
-
+//allows to choose correct position in menu
 int UserInterface::chooseMode()
 {
     while (1)
@@ -86,7 +86,7 @@ int UserInterface::chooseMode()
         else std::cout << "Niepoprawny wybór. Wybierz cyfrę z przedziału <1,3>\n" << std::endl;
     }
 }
-
+//menu for interactive mode
 void UserInterface::interactiveMode(OpinionAnalysisLevel* opinionAnalysis, WordAnalysisLevel* wordAnalysis)
 {
     InputParser parser;
@@ -97,7 +97,6 @@ void UserInterface::interactiveMode(OpinionAnalysisLevel* opinionAnalysis, WordA
     string fileName;
     string word;
 	Eigen::MatrixXf* result;
-
     int decision;
     while (1)
     {
@@ -128,14 +127,15 @@ void UserInterface::interactiveMode(OpinionAnalysisLevel* opinionAnalysis, WordA
                 for (auto sentence : parser.extractSentences(sent))
                 {
                     std::vector<Eigen::MatrixXf> analyzedWords;
+					//insert words from sentence to analyzedWords
                     for (auto word : parser.extractWordsFromSentence(sentence))
                     {
                         analyzedWords.push_back(*wordAnalysis->analyzeWord(parser.encodeString(word)));
                     }
-
+					//analyze sentences added to input
                     opinionAnalysis->addSentenceToInput(analyzedWords);
                 }
-
+				//returns rate calculated by neural network
                 rate = (*opinionAnalysis->analyzeOpinion())(0, 0);
 
                 opinionAnalysis->resetInput();
@@ -154,7 +154,7 @@ void UserInterface::interactiveMode(OpinionAnalysisLevel* opinionAnalysis, WordA
         }
     }
 }
-
+//read network files & initialize connections
 void UserInterface::activateInteractions(char** argv) {
     //sentence network params file, word network params file
     WordAnalysisLevel* wordNetwork = new WordAnalysisLevel;
@@ -184,7 +184,7 @@ void UserInterface::activateInteractions(char** argv) {
     delete wordNetwork;
     delete opinionNetwork;
 }
-
+//Training of World Layer
 void UserInterface::performWordLevelTraining(char **argv) {
     //network params file, input file, learning speed, threads, runs
     cout << "Uczenie poziomu analizy słów" << endl;
@@ -224,7 +224,7 @@ void UserInterface::performWordLevelTraining(char **argv) {
     cout << "Zapisywanie..." << endl;
     FileManager::writeNetworkFile(argv[0], networkData);
 }
-
+//Training od sentences layer
 void UserInterface::performOpinionLevelTraining(char **argv) {
     cout << "Uczenie poziomu analizy opinii" << endl;
     //teach sentence layer
