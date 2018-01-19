@@ -33,7 +33,7 @@ std::vector<std::string> InputParser::extractSentences(std::string text) {
 
 // adding sequences to set
 void InputParser::push(std::string s) {
-	while (s.at(0) == ' ')
+	while (s.size() > 0 && s.at(0) == ' ')
 		s = s.substr(1, s.size());
 	if (s == "." || s == "?" || s == "!")
 		return;
