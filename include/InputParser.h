@@ -22,10 +22,6 @@ private:
 	//adds given string to sentences,
 	//trimming begin and ignoring if first non-whitespace character is '.', '!' or '?'
 	void push(std::string);
-	//removes from word characters that are not letters
-	static string checkWordForNonLetters(string basic_string);
-	//converts to lowercase given string
-	static string toLower(string text);
 };
 
 
