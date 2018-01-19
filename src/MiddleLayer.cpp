@@ -4,17 +4,14 @@
 #include <math.h>
 #include "../include/MiddleLayer.h"
 
-MiddleLayer::MiddleLayer(int neurons, int previousLayerNeurons) {
-    this->neurons = neurons;
+MiddleLayer::MiddleLayer(int neurons, int previousLayerNeurons) : NeuronLayer(neurons) {
     this->connections = new Eigen::MatrixXf(neurons, previousLayerNeurons);
     this->bias = new Eigen::MatrixXf(neurons, 1);
     this->connections->setOnes();
-	delete this->output;
 	this->output = new Eigen::MatrixXf(neurons, 1);
 }
 
-MiddleLayer::MiddleLayer(const MiddleLayer &middleLayer) {
-    this->neurons = middleLayer.neurons;
+MiddleLayer::MiddleLayer(const MiddleLayer &middleLayer) : NeuronLayer(middleLayer.getNeuronNumber()) {
     this->connections = new Eigen::MatrixXf(*(middleLayer.connections));
     this->bias = new Eigen::MatrixXf(*(middleLayer.bias));
     this->output = new Eigen::MatrixXf(*(middleLayer.output));
@@ -23,16 +20,23 @@ MiddleLayer::MiddleLayer(const MiddleLayer &middleLayer) {
 void MiddleLayer::computeOutput(Eigen::MatrixXf* previousOutput) {
 	if (output != nullptr) delete output;
 	if (weitghtedInput != nullptr) delete weitghtedInput;
+    //multiply output of previous neuron layer by connections' weights
     Eigen::Product<Eigen::MatrixXf, Eigen::MatrixXf> product =  (*connections) * (*previousOutput);
 
 	weitghtedInput = new Eigen::MatrixXf(product);
 	output = new Eigen::MatrixXf(product);
 
+    //update output by summing up the multiplication results and biases
+    // and calculating value of activation function (arctan)
     for (int i = 0; i < output->cols(); i++){
         for (int j = 0; j < output->rows(); j++){
-            (*output)(j, i) = atan((*output)(j, i) + (*bias)(j, i))/(M_PI_2);
+            (*output)(j, i) = activationFunction((*output)(j, i) + (*bias)(j, i));
         }
     }
+}
+
+float MiddleLayer::activationFunction(float x) {
+    return atan(x)/M_PI_2;
 }
 
 Eigen::MatrixXf* MiddleLayer::getOutput() {

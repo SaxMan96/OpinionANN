@@ -5,62 +5,61 @@
 //Extracting sentences out of full text
 std::vector<std::string> InputParser::extractSentences(std::string text) {
 	this->sentences.clear();
-	text = toLower(text);
+
 	size_t pos = 0;
 	size_t pos1 = 0;
 	size_t pos2 = 0;
 	size_t pos3 = 0;
 	std::string token;
+
 	//removing  newline escape sequence '\n'  from text
 	while ((pos = text.find('\n')) != std::string::npos)
 		std::replace(text.begin(), text.end(), '\n', ' ');
+
 	while ((pos1 = text.find('.')) != std::string::npos ||
 		(pos2 = text.find('?')) != std::string::npos ||
 		(pos3 = text.find('!')) != std::string::npos
 		) {
-		pos1 = text.find('.');
-		pos2 = text.find('?');
-		pos3 = text.find('!');
-		pos = min(pos1, min(pos2, pos3));
-		token = text.substr(0, pos + 1);
+
+		pos = min(pos1, min(pos2, pos3)); //find first character that ends a sentence
+		token = text.substr(0, pos + 1); //get a sentence
 		push(token);
-		text.erase(0, pos + 1);
+
+		text.erase(0, pos + 1); //remove last sentence from text
 	}
 
 	return this->sentences;
 }
-// adding sequences into set
+
+// adding sequences to set
 void InputParser::push(std::string s) {
-	while (s.at(0) == ' ')
+	while (s.size() > 0 && s.at(0) == ' ')
 		s = s.substr(1, s.size());
 	if (s == "." || s == "?" || s == "!")
 		return;
 	sentences.push_back(s);
 };
-//changing letters to lower case
-string InputParser::toLower(string text) {
-	std::transform(text.begin(), text.end(), text.begin(), ::tolower);
-	return text;
-}
+
 //splitting sequences into set of words
 std::vector<std::string> InputParser::extractWordsFromSentence(std::string sent) {
-	sent = toLower(sent);
 	std::vector<std::string> ret;
 	size_t pos = 0;
 	std::string token;
 	//removing  newline escape sequence '\n'  from text
 	while (sent.find('\n') != std::string::npos)
 		std::replace(sent.begin(), sent.end(), '\n', ' ');
+
 	while ((pos = sent.find(' ')) != std::string::npos) {
 		token = sent.substr(0, pos + 1);
-		while (token.size()>0 && token.at(0) == ' ')
+
+		while (token.size()>0 && token.at(0) == ' ') //trim beginning of token
 			token = token.substr(1, token.size());
+
 		if (token.size() == 0) {
 			sent.erase(0, pos + 1);
 			continue;
 		}
-		//remove non-letters from word
-		token = checkWordForNonLetters(token);
+
 		if (token.size()>0)
 			ret.push_back(token);
 		sent.erase(0, pos + 1);
@@ -68,23 +67,6 @@ std::vector<std::string> InputParser::extractWordsFromSentence(std::string sent)
 	return ret;
 }
 
-string InputParser::checkWordForNonLetters(string word) {
-	int pos = 0;
-	//removing non-letters from begin of the word
-	while (word.size()>0 && !((word.at(pos) <= 'z' && word.at(pos) >= 'a') || (word.at(pos) <= 'Z' && word.at(pos) >= 'A')))
-		word.erase(pos, pos + 1);
-	pos = word.size() - 1;
-	if (word.size() == 0)
-		return word;
-	char c;
-	//removing non-letters from end of the word
-	while (!((word.at(pos) <= 'z' && word.at(pos) >= 'a') || (word.at(pos) <= 'Z' && word.at(pos) >= 'A'))) {
-		c = word.at(pos);
-		word.erase(pos, pos + 1);
-		pos = word.size() - 1;
-	}
-	return word;
-}
 //encode ascii and u8 characters from string and return it as a set
 std::vector<int> InputParser::encodeString(std::string word) {
 	std::vector<int> vec;
@@ -99,20 +81,24 @@ std::vector<int> InputParser::encodeString(std::string word) {
 	{
 		int code = -1;
 		
+		//check lowercase letters
 		for (int j = 0; j<letters.size(); j++)
 			if (word.substr(i, letters[j].size()) == letters[j]) {
 				code = j;
-				//u8 chars have twice bigger size than ascii chars, so we have to add this size to correctly read next letter
+				//u8 polish chars have varying size, so we have to add this size to correctly read next letter
 				i += letters[j].size() - 1;
 				break;
 			}
+		//check uppercase letters
 		for (int j = 0; j<upperCaseLetters.size(); j++)
 			if (word.substr(i, upperCaseLetters[j].size()) == upperCaseLetters[j]) {
 				code = j;
-				//u8 chars have twice bigger size than ascii chars, so we have to add this size to correctly read next letter
+				//u8 polish chars have varying size, so we have to add this size to correctly read next letter
 				i += upperCaseLetters[j].size() - 1;
 				break;
 			}
+		
+		//if current character is a letter
 		if (code != -1)
 			vec.push_back(code);
 	}

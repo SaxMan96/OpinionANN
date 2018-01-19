@@ -45,9 +45,9 @@ void FileManager::writeNetworkFile(std::string fileName, std::vector<std::pair<E
     else std::cout << "Unable to open file";
 }
 
-std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>> FileManager::readWordTrainingFile(std::string fileName)
+std::vector<std::pair<Input*, Eigen::MatrixXf*>> FileManager::readWordTrainingFile(std::string fileName)
 {
-    std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>> vec;
+    std::vector<std::pair<Input*, Eigen::MatrixXf*>> vec;
         std::string line;
 
     InputParser parser;
@@ -76,7 +76,9 @@ std::vector<std::pair<std::vector<int>, Eigen::MatrixXf*>> FileManager::readWord
         line.erase(0, pos + 1);
         (*expected)(2, 0) = std::stof(token);
 
-        vec.push_back({ parser.encodeString(word), expected });
+		WordsInputLayer::WordsInput* wordsInput = new WordsInputLayer::WordsInput;
+		wordsInput->encodedString = parser.encodeString(word);
+        vec.push_back({ wordsInput, expected });
     }
         myFile.close();
     }

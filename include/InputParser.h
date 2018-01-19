@@ -8,15 +8,20 @@ class InputParser {
 private:
 	std::vector<std::string> sentences; // every part of text separated from others by '.', '!' or '?'
 public:
+	//divides string by characters '.', '!', '?'
 	std::vector<std::string> extractSentences(std::string text); //save results in class fields
+	//divides given sentence into words (by whitespace)
 	static std::vector<std::string> extractWordsFromSentence(std::string sentence);
+	//encodes word
+	//each letter from polish alphabet is encoded as value from 0 (for letter 'a'),
+	//non-letter characters are omited
 	static std::vector<int> encodeString(std::string word);
-	std::vector<std::vector<int>> encodeSentence();
+	//returns last opinion parsed into sentences
 	std::vector<std::string> getSentences() { return sentences; };
 private:
+	//adds given string to sentences,
+	//trimming begin and ignoring if first non-whitespace character is '.', '!' or '?'
 	void push(std::string);
-	static string checkWordForNonLetters(string basic_string);
-	static string toLower(string text);
 };
 
 
