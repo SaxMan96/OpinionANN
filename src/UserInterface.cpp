@@ -22,7 +22,7 @@ std::string readLine()
 	
 	return c;
 }
-//transforms float rate <-1,1> to terms describing characteristic
+//transforms float rate <-1,1> to terms describing characteristic of word
 std::string UserInterface::rateToWords(float rate) {
     if (rate<-1.0 || rate>1.0)
         return "wystąpił błąd\n";
@@ -224,7 +224,7 @@ void UserInterface::performWordLevelTraining(char **argv) {
     cout << "Zapisywanie..." << endl;
     FileManager::writeNetworkFile(argv[0], networkData);
 }
-//Training od sentences layer
+//Training of sentences layer
 void UserInterface::performOpinionLevelTraining(char **argv) {
     cout << "Uczenie poziomu analizy opinii" << endl;
     //teach sentence layer
@@ -240,7 +240,7 @@ void UserInterface::performOpinionLevelTraining(char **argv) {
     float learningSpeed = atof(argv[3]);
     int threads = atoi(argv[4]);
     int runs = atoi(argv[5]);
-
+	//initializing connection
     if (wordNetworkData.size() > 0)
         wordNetwork->initKnownConnections(wordNetworkData);
     if (opinionNetworkData.size() > 0)
@@ -251,6 +251,7 @@ void UserInterface::performOpinionLevelTraining(char **argv) {
     vector < pair<vector<vector<Eigen::MatrixXf>>, Eigen::MatrixXf*>> trainingExamples;
     InputParser parser;
 
+	
     for (auto example : trainingExamples_unprocessed)
     {
         pair<vector<vector<Eigen::MatrixXf>>, Eigen::MatrixXf*> prepared;
@@ -275,6 +276,7 @@ void UserInterface::performOpinionLevelTraining(char **argv) {
 
     float cost = 0, bestCost = numeric_limits<float>::max();
 
+	//back-propagation process
     for (int i = 0; i < runs; i++)
     {
         cout << "Wykonano " << i + 1 << " z " << runs << "... ";
